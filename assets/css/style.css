@@ -1,0 +1,528 @@
+/* Gezgin Tilki - Main Stylesheet */
+:root {
+    --primary-color: #D90429;
+    /* Vivid Red from Logo */
+    --primary-hover: #EF233C;
+    /* Lighter Red */
+    --secondary-color: #111827;
+    /* Dark Black/Gray */
+    --accent-color: #2B2D42;
+    /* Dark Blue/Gray */
+    --text-dark: #111827;
+    --text-light: #4B5563;
+    --white: #ffffff;
+    --bg-light: #F9FAFB;
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--text-dark);
+    line-height: 1.6;
+    background-color: var(--bg-light);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    /* Bolder headings */
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: var(--transition);
+}
+
+ul {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* Header */
+header {
+    background: var(--white);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    /* Softer shadow */
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    padding: 0.5rem 0;
+    /* Default padding */
+}
+
+header.scrolled {
+    padding: 0;
+    /* Shrink on scroll */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+header.scrolled .logo img {
+    height: 70px !important;
+    /* Shrink logo */
+    transition: height 0.3s ease;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.logo img {
+    height: 90px;
+    /* Initial large size */
+    transition: height 0.3s ease;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2.5rem;
+    /* More space */
+    align-items: center;
+}
+
+.nav-links a:not(.btn-primary) {
+    font-weight: 600;
+    color: var(--text-dark);
+    position: relative;
+    font-size: 1.05rem;
+    padding-bottom: 5px;
+}
+
+/* Underline Hover Animation */
+.nav-links a:not(.btn-primary)::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.nav-links a:not(.btn-primary):hover {
+    color: var(--primary-color);
+}
+
+.nav-links a:not(.btn-primary):hover::after {
+    width: 100%;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    /* Rounded pill shape */
+    font-weight: 700;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(217, 4, 41, 0.3);
+    /* Glowy shadow */
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(217, 4, 41, 0.4);
+}
+
+/* Mobile Menu Button */
+.mobile-menu-btn {
+    display: none;
+    font-size: 1.8rem;
+    color: var(--text-dark);
+    cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        /* JS will toggle this */
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: var(--white);
+        flex-direction: column;
+        padding: 2rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        gap: 1.5rem;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .logo img {
+        height: 60px !important;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(217, 4, 41, 0.3);
+}
+
+/* Hero Section */
+.hero {
+    height: 90vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--white);
+    padding-top: 150px;
+    /* Adjusted for taller header */
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    color: var(--white);
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-content p {
+    font-size: 1.25rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    font-weight: 300;
+}
+
+/* Section Spacing */
+section {
+    padding: 4rem 0;
+}
+
+/* Footer */
+footer {
+    background-color: var(--secondary-color);
+    color: var(--white);
+    padding: 3rem 0;
+    text-align: center;
+}
+
+/* Search Box Enhancements */
+.search-box {
+    transition: transform 0.3s;
+}
+
+.search-box:hover {
+    transform: translateY(-5px);
+}
+
+/* Featured Tours Grid */
+.tours-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+/* Testimonials Section */
+.testimonials {
+    background-color: var(--bg-light);
+    text-align: center;
+}
+
+.testimonial-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin: 1rem;
+    position: relative;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.testimonial-card::before {
+    content: '\201C';
+    font-family: serif;
+    font-size: 5rem;
+    color: var(--primary-color);
+    position: absolute;
+    top: -1rem;
+    left: 1rem;
+    opacity: 0.2;
+}
+
+.testimonial-user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.testimonial-user img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Newsletter Section */
+.newsletter {
+    background: linear-gradient(rgba(26, 83, 92, 0.9), rgba(26, 83, 92, 0.9)), url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+    color: var(--white);
+    text-align: center;
+    padding: 5rem 0;
+}
+
+.newsletter-form {
+    max-width: 500px;
+    margin: 2rem auto 0;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.newsletter-form input {
+    flex: 1;
+    padding: 1rem;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+}
+
+/* Destination Cards */
+.destination-card {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 300px;
+    cursor: pointer;
+}
+
+.destination-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.destination-card:hover img {
+    transform: scale(1.1);
+}
+
+.destination-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    padding: 1.5rem;
+
+    color: var(--white);
+}
+
+.destination-overlay h3 {
+    color: var(--white) !important;
+    margin-bottom: 0.25rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.destination-overlay p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.page-header {
+    margin-top: 120px;
+    /* Offset for fixed header */
+    position: relative;
+    z-index: 1;
+}
+
+.page-header h1 {
+    color: var(--white) !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    margin-bottom: 0.5rem;
+}
+
+.page-header p {
+    color: var(--white) !important;
+    font-size: 1.25rem;
+    font-weight: 500;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Flatpickr Custom Theme */
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected.inRange,
+.flatpickr-day.startRange.inRange,
+.flatpickr-day.endRange.inRange,
+.flatpickr-day.selected:focus,
+.flatpickr-day.startRange:focus,
+.flatpickr-day.endRange:focus,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover,
+.flatpickr-day.selected.prevMonthDay,
+.flatpickr-day.startRange.prevMonthDay,
+.flatpickr-day.endRange.prevMonthDay,
+.flatpickr-day.selected.nextMonthDay,
+.flatpickr-day.startRange.nextMonthDay,
+.flatpickr-day.endRange.nextMonthDay {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.flatpickr-day.inRange {
+    box-shadow: -5px 0 0 #fee2e2, 5px 0 0 #fee2e2;
+    background: #fee2e2 !important;
+    /* Very light red */
+    border-color: #fee2e2 !important;
+}
+
+.flatpickr-months .flatpickr-month {
+    background: var(--primary-color);
+    color: #fff;
+    fill: #fff;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month {
+    background-color: var(--primary-color);
+}
+
+.flatpickr-weekdays {
+    background: var(--primary-color);
+}
+
+span.flatpickr-weekday {
+    color: #fff !important;
+}
+
+/* Owl Carousel Custom Navigation */
+.owl-nav button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff !important;
+    width: 40px;
+    height: 40px;
+    border-radius: 50% !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    color: var(--primary-color) !important;
+    font-size: 1.2rem !important;
+    transition: all 0.3s ease;
+}
+
+.owl-nav button:hover {
+    background: var(--primary-color) !important;
+    color: #fff !important;
+}
+
+.owl-prev {
+    left: -20px;
+}
+
+.owl-next {
+    right: -20px;
+}
+
+.owl-dots {
+    margin-top: 20px !important;
+}
+
+.owl-dot span {
+    background: #ddd !important;
+    width: 10px !important;
+    height: 10px !important;
+    margin: 5px !important;
+}
+
+.owl-dot.active span {
+    background: var(--primary-color) !important;
+    transform: scale(1.2);
+}
+
+/* Tours Page Sidebar */
+.filters label {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    transition: color 0.3s;
+}
+
+.filters label:hover {
+    color: var(--primary-color);
+}
+
+.filters input[type="checkbox"] {
+    accent-color: var(--primary-color);
+    width: 16px;
+    height: 16px;
+}
+
+.filters input[type="number"],
+.filters input[type="text"] {
+    transition: border-color 0.3s;
+}
+
+.filters input[type="number"]:focus,
+.filters input[type="text"]:focus {
+    border-color: var(--primary-color) !important;
+    outline: none;
+}
+
+/* Responsive adjustments for Tours Page */
+@media (max-width: 768px) {
+    .tours-listing .row {
+        flex-direction: column;
+    }
+
+    .filters {
+        width: 100%;
+        position: static !important;
+        /* Disable sticky on mobile */
+    }
+}
