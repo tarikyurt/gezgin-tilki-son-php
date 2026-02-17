@@ -61,7 +61,7 @@ include 'includes/header.php';
                         style="margin-bottom: 1.5rem; border-bottom: 1px solid #eee; padding-bottom: 1rem;">
                         <span style="display: block; color: var(--text-light); font-size: 0.9rem;">Başlangıç
                             Fiyatı</span>
-                        <span
+                        <span id="base-price" data-price="<?php echo $tour['price']; ?>"
                             style="font-size: 2rem; font-weight: 700; color: var(--secondary-color);">€<?php echo $tour['price']; ?></span>
                         <span style="color: var(--text-light);">/kişi başı</span>
                     </div>
@@ -69,26 +69,58 @@ include 'includes/header.php';
                     <form action="#" class="booking-form">
                         <div class="form-group" style="margin-bottom: 1rem;">
                             <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Tarih Seçin</label>
-                            <input type="date"
+                            <input type="text" id="booking-date" placeholder="Tarih seçiniz..."
                                 style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px;">
                         </div>
                         <div class="form-group" style="margin-bottom: 1rem;">
                             <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Kişi Sayısı</label>
-                            <input type="number" min="1" value="2"
+                            <input type="number" id="person-count" min="1" value="2"
                                 style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px;">
                         </div>
 
                         <div class="total-price"
                             style="display: flex; justify-content: space-between; font-weight: 700; margin: 1.5rem 0; font-size: 1.1rem;">
                             <span>Toplam:</span>
-                            <span>Hesaplanıyor...</span>
+                            <span id="total-price" style="color: var(--primary-color);">€0</span>
                         </div>
 
-                        <button type="button" onclick="alert('Rezervasyon sistemi yakında aktif olacak!')"
-                            class="btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">Rezarvasyon
+                        <button type="submit" class="btn-primary"
+                            style="width: 100%; padding: 1rem; font-size: 1.1rem;">Rezervasyon
                             Yap</button>
                     </form>
                 </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        // Initialize Date Picker
+                        flatpickr("#booking-date", {
+                            minDate: "today",
+                            dateFormat: "d.m.Y",
+                            locale: "tr"
+                        });
+
+                        const basePriceElement = document.getElementById('base-price');
+                        const basePrice = parseFloat(basePriceElement.getAttribute('data-price'));
+                        const personCountInput = document.getElementById('person-count');
+                        const totalPriceElement = document.getElementById('total-price');
+
+                        function calculateTotal() {
+                            const count = parseInt(personCountInput.value) || 1;
+                            const total = basePrice * count;
+                            totalPriceElement.textContent = '€' + total.toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
+                        }
+
+                        // Event Listeners
+                        personCountInput.addEventListener('input', calculateTotal);
+                        personCountInput.addEventListener('change', calculateTotal);
+
+                        // Initial Calculation
+                        calculateTotal();
+                    });
+                </script>
             </aside>
         </div>
     </div>

@@ -526,3 +526,9 @@ span.flatpickr-weekday {
         /* Disable sticky on mobile */
     }
 }
+
+/* Tour Card Interaction */
+.tour-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+}

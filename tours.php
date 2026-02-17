@@ -107,41 +107,45 @@
                     style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
                     <?php if (count($tours) > 0): ?>
                         <?php foreach ($tours as $tour): ?>
-                            <div class="tour-card"
-                                style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.1); transition: transform 0.3s; display: flex; flex-direction: column;">
-                                <div class="tour-img" style="height: 220px; position: relative;">
-                                    <img src="uploads/<?php echo $tour['image_url']; ?>"
-                                        alt="<?php echo htmlspecialchars($tour['title']); ?>"
-                                        style="width: 100%; height: 100%; object-fit: cover;">
-                                    <?php if ($tour['is_featured']): ?>
-                                        <span
-                                            style="position: absolute; top: 1rem; right: 1rem; background: var(--primary-color); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">Popüler</span>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="tour-info" style="padding: 1.5rem; flex: 1; display: flex; flex-direction: column;">
-                                    <div
-                                        style="display: flex; justify-content: space-between; color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">
-                                        <span><i class="fa-regular fa-clock"></i>
-                                            <?php echo htmlspecialchars($tour['duration']); ?></span>
-                                        <span><i class="fa-solid fa-location-dot"></i>
-                                            <?php echo htmlspecialchars($tour['location']); ?></span>
+                            <a href="tour-detail.php?id=<?php echo $tour['id']; ?>"
+                                style="text-decoration: none; color: inherit; display: block;">
+                                <div class="tour-card"
+                                    style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.1); transition: transform 0.3s; display: flex; flex-direction: column; height: 100%;">
+                                    <div class="tour-img" style="height: 220px; position: relative;">
+                                        <img src="uploads/<?php echo $tour['image_url']; ?>"
+                                            alt="<?php echo htmlspecialchars($tour['title']); ?>"
+                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                        <?php if ($tour['is_featured']): ?>
+                                            <span
+                                                style="position: absolute; top: 1rem; right: 1rem; background: var(--primary-color); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">Popüler</span>
+                                        <?php endif; ?>
                                     </div>
-                                    <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--secondary-color);">
-                                        <?php echo htmlspecialchars($tour['title']); ?></h3>
-                                    <p
-                                        style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 42px;">
-                                        <?php echo htmlspecialchars($tour['description']); ?>
-                                    </p>
-                                    <div
-                                        style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 1rem;">
-                                        <span
-                                            style="font-weight: 700; color: var(--primary-color); font-size: 1.25rem;">€<?php echo $tour['price']; ?></span>
-                                        <a href="tour-detail.php?id=<?php echo $tour['id']; ?>"
-                                            style="color: var(--secondary-color); font-weight: 600; transition: color 0.3s;">İncele
-                                            <i class="fa-solid fa-arrow-right"></i></a>
+                                    <div class="tour-info"
+                                        style="padding: 1.5rem; flex: 1; display: flex; flex-direction: column;">
+                                        <div
+                                            style="display: flex; justify-content: space-between; color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                            <span><i class="fa-regular fa-clock"></i>
+                                                <?php echo htmlspecialchars($tour['duration']); ?></span>
+                                            <span><i class="fa-solid fa-location-dot"></i>
+                                                <?php echo htmlspecialchars($tour['location']); ?></span>
+                                        </div>
+                                        <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--secondary-color);">
+                                            <?php echo htmlspecialchars($tour['title']); ?></h3>
+                                        <p
+                                            style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 42px;">
+                                            <?php echo htmlspecialchars($tour['description']); ?>
+                                        </p>
+                                        <div
+                                            style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 1rem;">
+                                            <span
+                                                style="font-weight: 700; color: var(--primary-color); font-size: 1.25rem;">€<?php echo $tour['price']; ?></span>
+                                            <span
+                                                style="color: var(--secondary-color); font-weight: 600; transition: color 0.3s;">İncele
+                                                <i class="fa-solid fa-arrow-right"></i></span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <div
