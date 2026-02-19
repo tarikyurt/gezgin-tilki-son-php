@@ -1,4 +1,5 @@
-<?php include 'includes/header.php'; ?>
+<?php $has_hero = true;
+include 'includes/header.php'; ?>
 
 <section class="page-header"
     style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover; height: 300px; display: flex; align-items: center; justify-content: center; color: white; padding-top: 80px;">
@@ -130,7 +131,8 @@
                                                 <?php echo htmlspecialchars($tour['location']); ?></span>
                                         </div>
                                         <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--secondary-color);">
-                                            <?php echo htmlspecialchars($tour['title']); ?></h3>
+                                            <?php echo htmlspecialchars($tour['title']); ?>
+                                        </h3>
                                         <p
                                             style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 42px;">
                                             <?php echo htmlspecialchars($tour['description']); ?>
@@ -138,7 +140,7 @@
                                         <div
                                             style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 1rem;">
                                             <span
-                                                style="font-weight: 700; color: var(--primary-color); font-size: 1.25rem;">€<?php echo $tour['price']; ?></span>
+                                                style="font-weight: 700; color: var(--primary-color); font-size: 1.25rem;"><?php echo formatCurrency($tour['price'], $tour['currency'] ?? 'EUR'); ?></span>
                                             <span
                                                 style="color: var(--secondary-color); font-weight: 600; transition: color 0.3s;">İncele
                                                 <i class="fa-solid fa-arrow-right"></i></span>

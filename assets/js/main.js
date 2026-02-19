@@ -3,14 +3,28 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Gezgin Tilki Website Loaded');
 
-    // Sticky Navbar
+    // Premium Header - Scroll handler for glassmorphism transitions
     const header = document.querySelector('header');
+    const isTransparentPage = header.classList.contains('transparent');
 
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
             header.classList.add('scrolled');
+            header.classList.remove('transparent');
         } else {
             header.classList.remove('scrolled');
+            if (isTransparentPage) {
+                header.classList.add('transparent');
+            }
+        }
+    });
+
+    // Active page highlighting
+    const currentPath = window.location.pathname.split('/').pop() || 'index.php';
+    document.querySelectorAll('.nav-links a:not(.btn-primary)').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === currentPath || (currentPath === '' && href === 'index.php')) {
+            link.classList.add('active');
         }
     });
 

@@ -1,4 +1,5 @@
-<?php include 'includes/header.php'; ?>
+<?php $has_hero = true;
+include 'includes/header.php'; ?>
 
 <!-- Hero Section -->
 <section class="hero" style="position: relative; overflow: hidden;">
@@ -26,11 +27,12 @@
         style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
 
         <!-- Destination -->
-        <div class="form-group" style="flex: 2; min-width: 200px;">
+        <div class="form-group" style="flex: 2; min-width: 200px; position: relative;">
             <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;"><i
                     class="fa-solid fa-location-dot"></i> Nereye?</label>
-            <input type="text" placeholder="Destinasyon ara..."
+            <input type="text" id="search-destination" autocomplete="off" placeholder="Destinasyon ara..."
                 style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px;">
+            <div id="search-results" class="search-dropdown"></div>
         </div>
 
         <!-- Date Range -->
@@ -86,7 +88,7 @@
         </div>
 
         <div class="form-group" style="flex: 0 0 auto;">
-            <button class="btn-primary"
+            <button class="btn-primary" onclick="performSearch()"
                 style="height: 48px; display: flex; align-items: center; gap: 0.5rem; padding: 0 2rem;">
                 <i class="fa-solid fa-magnifying-glass"></i> Ara
             </button>
@@ -107,8 +109,11 @@
                     <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                         alt="İtalya">
                     <div class="destination-overlay">
-                        <h3>İtalya</h3>
-                        <p>12 Tur</p>
+                        <h3><i class="fa-solid fa-location-dot"></i> İtalya</h3>
+                        <div class="dest-meta">
+                            <span class="dest-tours">12 Tur</span>
+                        </div>
+                        <div class="dest-cta">Keşfet <i class="fa-solid fa-arrow-right"></i></div>
                     </div>
                 </div>
             </div>
@@ -117,8 +122,11 @@
                     <img src="https://images.unsplash.com/photo-1527668752968-14dc70a27c95?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                         alt="Japonya">
                     <div class="destination-overlay">
-                        <h3>Japonya</h3>
-                        <p>5 Tur</p>
+                        <h3><i class="fa-solid fa-location-dot"></i> Japonya</h3>
+                        <div class="dest-meta">
+                            <span class="dest-tours">5 Tur</span>
+                        </div>
+                        <div class="dest-cta">Keşfet <i class="fa-solid fa-arrow-right"></i></div>
                     </div>
                 </div>
             </div>
@@ -127,8 +135,11 @@
                     <img src="https://images.unsplash.com/photo-1523531294919-4bcd7c65e216?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                         alt="İspanya">
                     <div class="destination-overlay">
-                        <h3>İspanya</h3>
-                        <p>8 Tur</p>
+                        <h3><i class="fa-solid fa-location-dot"></i> İspanya</h3>
+                        <div class="dest-meta">
+                            <span class="dest-tours">8 Tur</span>
+                        </div>
+                        <div class="dest-cta">Keşfet <i class="fa-solid fa-arrow-right"></i></div>
                     </div>
                 </div>
             </div>
@@ -137,8 +148,11 @@
                     <img src="https://images.unsplash.com/photo-1589330273594-fade1ee91647?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                         alt="Mısır">
                     <div class="destination-overlay">
-                        <h3>Mısır</h3>
-                        <p>6 Tur</p>
+                        <h3><i class="fa-solid fa-location-dot"></i> Mısır</h3>
+                        <div class="dest-meta">
+                            <span class="dest-tours">6 Tur</span>
+                        </div>
+                        <div class="dest-cta">Keşfet <i class="fa-solid fa-arrow-right"></i></div>
                     </div>
                 </div>
             </div>
@@ -147,8 +161,11 @@
                     <img src="https://images.unsplash.com/photo-1499678329028-101435549a4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                         alt="Venedik">
                     <div class="destination-overlay">
-                        <h3>Venedik</h3>
-                        <p>4 Tur</p>
+                        <h3><i class="fa-solid fa-location-dot"></i> Venedik</h3>
+                        <div class="dest-meta">
+                            <span class="dest-tours">4 Tur</span>
+                        </div>
+                        <div class="dest-cta">Keşfet <i class="fa-solid fa-arrow-right"></i></div>
                     </div>
                 </div>
             </div>
@@ -157,8 +174,11 @@
                     <img src="https://images.unsplash.com/photo-1548013146-72479768bada?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                         alt="Hindistan">
                     <div class="destination-overlay">
-                        <h3>Hindistan</h3>
-                        <p>7 Tur</p>
+                        <h3><i class="fa-solid fa-location-dot"></i> Hindistan</h3>
+                        <div class="dest-meta">
+                            <span class="dest-tours">7 Tur</span>
+                        </div>
+                        <div class="dest-cta">Keşfet <i class="fa-solid fa-arrow-right"></i></div>
                     </div>
                 </div>
             </div>
@@ -210,7 +230,7 @@
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 1rem;">
                             <span
-                                style="font-weight: 700; color: var(--secondary-color); font-size: 1.25rem;">€<?php echo $tour['price']; ?></span>
+                                style="font-weight: 700; color: var(--secondary-color); font-size: 1.25rem;"><?php echo formatCurrency($tour['price'], $tour['currency'] ?? 'EUR'); ?></span>
                             <a href="tour-detail.php?id=<?php echo $tour['id']; ?>"
                                 style="color: var(--primary-color); font-weight: 600;">İncele <i
                                     class="fa-solid fa-arrow-right"></i></a>
@@ -260,5 +280,60 @@
         </form>
     </div>
 </section>
+
+<script>
+    // Search Autocomplete Logic
+    const searchInput = document.getElementById('search-destination');
+    const searchResults = document.getElementById('search-results');
+
+    let debounceTimer;
+
+    searchInput.addEventListener('input', function () {
+        clearTimeout(debounceTimer);
+        const query = this.value.trim();
+
+        if (query.length < 1) { searchResults.style.display = 'none'; return; } debounceTimer = setTimeout(() => {
+            fetch(`api/search-destinations.php?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        searchResults.innerHTML = '';
+                        data.forEach(tour => {
+                            const div = document.createElement('div');
+                            div.className = 'search-result-item';
+                            div.innerHTML = `
+                                <div>
+                                    <h4>${tour.title}</h4>
+                                    <p><i class="fa-solid fa-location-dot"></i> ${tour.location}</p>
+                                </div>
+                            `; div.onclick = () => {
+                                window.location.href = `tour-detail.php?id=${tour.id}`;
+                            };
+                            searchResults.appendChild(div);
+                        });
+                        searchResults.style.display = 'block';
+                    } else {
+                        searchResults.style.display = 'none';
+                    }
+                })
+                .catch(err => console.error('Error fetching suggestions:', err));
+        }, 300);
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.style.display = 'none';
+        }
+    });
+
+    // Perform Search on Button Click
+    function performSearch() {
+        const query = searchInput.value.trim();
+        if (query) {
+            window.location.href = `tours.php?search=${encodeURIComponent(query)}`;
+        }
+    }
+</script>
 
 <?php include 'includes/footer.php'; ?>

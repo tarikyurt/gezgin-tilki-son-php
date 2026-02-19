@@ -11,4 +11,6 @@ try {
 } catch (PDOException $e) {
     die("Veritabanı bağlantı hatası: " . $e->getMessage());
 }
+
+require_once 'functions.php';
 ?>

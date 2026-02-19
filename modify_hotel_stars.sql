@@ -1,0 +1,1 @@
+ALTER TABLE tour_dates MODIFY COLUMN hotel_stars VARCHAR(50) DEFAULT '';

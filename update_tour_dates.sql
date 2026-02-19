@@ -1,0 +1,2 @@
+ALTER TABLE tour_dates ADD COLUMN currency VARCHAR(3) DEFAULT 'EUR';
+ALTER TABLE tour_dates ADD COLUMN hotel_stars INT DEFAULT 0;

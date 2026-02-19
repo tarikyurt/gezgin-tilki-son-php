@@ -1,9 +1,6 @@
 <?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
+require_once '../includes/auth.php';
+requireRole(['admin']);
 require_once '../includes/db.php';
 
 if (isset($_GET['id'])) {

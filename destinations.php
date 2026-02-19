@@ -1,4 +1,5 @@
-<?php include 'includes/header.php'; ?>
+<?php $has_hero = true;
+include 'includes/header.php'; ?>
 
 <section class="page-header"
     style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover; height: 300px; display: flex; align-items: center; justify-content: center; color: white; padding-top: 80px;">

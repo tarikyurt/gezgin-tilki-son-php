@@ -36,11 +36,12 @@
 
 <body>
 
-    <header>
+    <header class="<?php echo (!empty($has_hero)) ? 'transparent' : ''; ?>">
         <div class="container">
             <nav>
                 <a href="index.php" class="logo">
-                    <img src="/Gezgin-tilki-deneme/assets/img/logo.png" alt="Gezgin Tilki" style="height: 90px;">
+                    <img src="/Gezgin-tilki-deneme/assets/img/logo.png" alt="Gezgin Tilki" class="logo-dark">
+                    <img src="/Gezgin-tilki-deneme/assets/img/logo-white.png" alt="Gezgin Tilki" class="logo-light">
                 </a>
                 <div class="nav-links">
                     <a href="index.php">Anasayfa</a>
