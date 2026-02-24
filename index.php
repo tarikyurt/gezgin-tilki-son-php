@@ -104,84 +104,64 @@ include 'includes/header.php'; ?>
             <p>Sezonun en gözde tatil rotaları</p>
         </div>
         <div class="owl-carousel owl-theme destination-carousel">
-            <div class="item">
-                <div class="destination-card">
-                    <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                        alt="İtalya">
-                    <div class="destination-overlay">
-                        <h3><i class="fa-solid fa-location-dot"></i> İtalya</h3>
-                        <div class="dest-meta">
-                            <span class="dest-tours">12 Tur</span>
+            <?php
+            $destinations = [
+                [
+                    'name' => 'Paris',
+                    'link' => 'https://tur.gezgintilki.com/turlar?s=paris',
+                    'image' => 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                    'search' => 'paris'
+                ],
+                [
+                    'name' => 'Mısır',
+                    'link' => 'https://tur.gezgintilki.com/turlar?s=m%C4%B1s%C4%B1r',
+                    'image' => 'https://images.unsplash.com/photo-1589330273594-fade1ee91647?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                    'search' => 'mısır'
+                ],
+                [
+                    'name' => 'İtalya',
+                    'link' => 'https://tur.gezgintilki.com/turlar?s=italya',
+                    'image' => 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                    'search' => 'italya'
+                ],
+                [
+                    'name' => 'İspanya',
+                    'link' => 'https://tur.gezgintilki.com/turlar?s=ispanya',
+                    'image' => 'https://images.unsplash.com/photo-1523531294919-4bcd7c65e216?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                    'search' => 'ispanya'
+                ],
+                [
+                    'name' => 'Benelüks',
+                    'link' => 'https://tur.gezgintilki.com/turlar?s=benel%C3%BCks',
+                    'image' => 'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                    'search' => 'benelüks'
+                ],
+                [
+                    'name' => 'Budva',
+                    'link' => 'https://tur.gezgintilki.com/turlar?s=budva',
+                    'image' => 'https://images.unsplash.com/photo-1590523278191-995cbcda646b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                    'search' => 'budva'
+                ]
+            ];
+            foreach ($destinations as $dest):
+                ?>
+                <div class="item">
+                    <a href="<?php echo $dest['link']; ?>" target="_blank" style="text-decoration: none; color: inherit;">
+                        <div class="destination-card">
+                            <img src="<?php echo $dest['image']; ?>" alt="<?php echo htmlspecialchars($dest['name']); ?>">
+                            <div class="destination-overlay">
+                                <h3><i class="fa-solid fa-location-dot"></i> <?php echo htmlspecialchars($dest['name']); ?>
+                                </h3>
+                                <div class="dest-meta">
+                                    <span class="dest-tours" data-search="<?php echo urlencode($dest['search']); ?>">Turları
+                                        Gör</span>
+                                </div>
+                                <div class="dest-cta">Keşfet <i class="fa-solid fa-arrow-right"></i></div>
+                            </div>
                         </div>
-                        <div class="dest-cta">Keşfet <i class="fa-solid fa-arrow-right"></i></div>
-                    </div>
+                    </a>
                 </div>
-            </div>
-            <div class="item">
-                <div class="destination-card">
-                    <img src="https://images.unsplash.com/photo-1527668752968-14dc70a27c95?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                        alt="Japonya">
-                    <div class="destination-overlay">
-                        <h3><i class="fa-solid fa-location-dot"></i> Japonya</h3>
-                        <div class="dest-meta">
-                            <span class="dest-tours">5 Tur</span>
-                        </div>
-                        <div class="dest-cta">Keşfet <i class="fa-solid fa-arrow-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="destination-card">
-                    <img src="https://images.unsplash.com/photo-1523531294919-4bcd7c65e216?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                        alt="İspanya">
-                    <div class="destination-overlay">
-                        <h3><i class="fa-solid fa-location-dot"></i> İspanya</h3>
-                        <div class="dest-meta">
-                            <span class="dest-tours">8 Tur</span>
-                        </div>
-                        <div class="dest-cta">Keşfet <i class="fa-solid fa-arrow-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="destination-card">
-                    <img src="https://images.unsplash.com/photo-1589330273594-fade1ee91647?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                        alt="Mısır">
-                    <div class="destination-overlay">
-                        <h3><i class="fa-solid fa-location-dot"></i> Mısır</h3>
-                        <div class="dest-meta">
-                            <span class="dest-tours">6 Tur</span>
-                        </div>
-                        <div class="dest-cta">Keşfet <i class="fa-solid fa-arrow-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="destination-card">
-                    <img src="https://images.unsplash.com/photo-1499678329028-101435549a4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                        alt="Venedik">
-                    <div class="destination-overlay">
-                        <h3><i class="fa-solid fa-location-dot"></i> Venedik</h3>
-                        <div class="dest-meta">
-                            <span class="dest-tours">4 Tur</span>
-                        </div>
-                        <div class="dest-cta">Keşfet <i class="fa-solid fa-arrow-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="destination-card">
-                    <img src="https://images.unsplash.com/photo-1548013146-72479768bada?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                        alt="Hindistan">
-                    <div class="destination-overlay">
-                        <h3><i class="fa-solid fa-location-dot"></i> Hindistan</h3>
-                        <div class="dest-meta">
-                            <span class="dest-tours">7 Tur</span>
-                        </div>
-                        <div class="dest-cta">Keşfet <i class="fa-solid fa-arrow-right"></i></div>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>

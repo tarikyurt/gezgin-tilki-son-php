@@ -46,7 +46,8 @@ include 'includes/header.php'; ?>
 
             // Search Term
             if (!empty($search_term)) {
-                $query .= " AND (title LIKE ? OR description LIKE ?)";
+                $query .= " AND (title LIKE ? OR description LIKE ? OR location LIKE ?)";
+                $params[] = "%$search_term%";
                 $params[] = "%$search_term%";
                 $params[] = "%$search_term%";
             }
