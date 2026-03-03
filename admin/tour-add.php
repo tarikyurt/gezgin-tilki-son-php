@@ -14,9 +14,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title)));
         $description = $_POST['description'];
         $price = $_POST['price'];
-        $duration = $_POST['duration'];
+        // GÜN VE GECE AYRIMI
+        $day_count = $_POST['duration_day'] ?? 0;
+        $night_count = $_POST['duration_night'] ?? 0;
+        $duration = $day_count . " Gün " . $night_count . " Gece";
         $location = $_POST['location'];
         $is_featured = isset($_POST['is_featured']) ? 1 : 0;
+        $is_active = $_POST['is_active'] ?? 0;
 
         // Image Upload
         $image_url = 'default.jpg'; // Default image
@@ -31,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        $stmt = $pdo->prepare("INSERT INTO tours (title, slug, description, price, currency, duration, location, image_url, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$title, $slug, $description, $price, $_POST['currency'], $duration, $location, $image_url, $is_featured]);
+        $stmt = $pdo->prepare("INSERT INTO tours (title, slug, description, price, currency, duration, location, image_url, is_featured, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$title, $slug, $description, $price, $_POST['currency'], $duration, $location, $image_url, $is_featured, $is_active]);
         $tour_id = $pdo->lastInsertId();
 
         // 2. Insert Itinerary
@@ -207,13 +211,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         </div>
                                     </div>
                                     <div class="form-group" style="flex: 1;">
-                                        <label>Süre</label>
-                                        <input type="text" name="duration" placeholder="Örn: 3 Gün" required>
+                                        <label>Süre Detayı</label>
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            <div style="flex:1">
+                                                <div style="position: relative;">
+                                                    <input type="number" name="duration_day" min="1" placeholder="Gün"
+                                                        required style="padding-right: 35px;">
+                                                    <span
+                                                        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: #888;">Gün</span>
+                                                </div>
+                                            </div>
+                                            <div style="flex:1">
+                                                <div style="position: relative;">
+                                                    <input type="number" name="duration_night" min="0"
+                                                        placeholder="Gece" required style="padding-right: 40px;">
+                                                    <span
+                                                        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: #888;">Gece</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Lokasyon</label>
                                     <input type="text" name="location" placeholder="Örn: İtalya" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tur Durumu (Yayında mı?)</label>
+                                    <select name="is_active"
+                                        style="width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 5px; background-color: #fff;">
+                                        <option value="0" selected>🔒 Taslak (Pasif - Sitede Görünmez)</option>
+                                        <option value="1">✅ Yayında (Aktif - Sitede Görünür)</option>
+                                    </select>
+                                    <small style="color: #888; font-size: 0.8rem; margin-top: 3px; display:block;">
+                                        Eğer tur hazır değilse 'Taslak' seçin.
+                                    </small>
                                 </div>
                                 <div class="form-group">
                                     <label>Öne Çıkarılan Tur?</label>
@@ -381,7 +413,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="button" class="btn-remove" onclick="this.parentElement.remove()">Sil</button>
     `;
             container.appendChild(div);
-            
+
             // Initialize Quill for the newly added row
             const newQuillEditor = div.querySelector('.quill-editor');
             const newTextarea = div.querySelector('textarea[name="itinerary_desc[]"]');
@@ -467,13 +499,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Quill Initialization Logic
         const allQuillInstances = [];
-        
+
         const quillOptions = {
             theme: 'snow',
             modules: {
                 toolbar: [
                     ['bold', 'italic', 'underline'],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                     [{ 'color': [] }, { 'background': [] }],
                     ['link'],
                     ['clean']
@@ -483,17 +515,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         function initSingleQuill(editorEl, textareaEl) {
             const quill = new Quill(editorEl, quillOptions);
-            
+
             // If the textarea already has HTML content, load it into Quill
             if (textareaEl.value.trim() !== '') {
                 quill.root.innerHTML = textareaEl.value;
             }
-            
+
             // Sync on text change
-            quill.on('text-change', function() {
+            quill.on('text-change', function () {
                 textareaEl.value = quill.root.innerHTML;
             });
-            
+
             allQuillInstances.push({
                 quill: quill,
                 textarea: textareaEl
@@ -503,7 +535,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         document.addEventListener('DOMContentLoaded', function () {
             const itineraryEditors = document.querySelectorAll('#itinerary-container .quill-editor');
             const itineraryTextareas = document.querySelectorAll('#itinerary-container textarea[name="itinerary_desc[]"]');
-            
+
             itineraryEditors.forEach((editorEl, index) => {
                 const textareaEl = itineraryTextareas[index];
                 if (textareaEl) {
@@ -513,7 +545,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         });
 
         // Sync right before form submission to ensure latest content is in textarea
-        document.getElementById('tourForm').addEventListener('submit', function() {
+        document.getElementById('tourForm').addEventListener('submit', function () {
             allQuillInstances.forEach(instance => {
                 instance.textarea.value = instance.quill.root.innerHTML;
             });

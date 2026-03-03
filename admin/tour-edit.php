@@ -20,9 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $title = $_POST['title'];
         $description = $_POST['description'];
         $price = $_POST['price'];
-        $duration = $_POST['duration'];
+        $day_count = $_POST['duration_day'] ?? 0;
+        $night_count = $_POST['duration_night'] ?? 0;
+        $duration = $day_count . " Gün " . $night_count . " Gece";
         $location = $_POST['location'];
         $is_featured = isset($_POST['is_featured']) ? 1 : 0;
+        $is_active = $_POST['is_active'] ?? 0;
 
         // Image Upload
         $stmt = $pdo->prepare("SELECT image_url FROM tours WHERE id = ?");
@@ -41,8 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        $stmt = $pdo->prepare("UPDATE tours SET title = ?, description = ?, price = ?, currency = ?, duration = ?, location = ?, image_url = ?, is_featured = ? WHERE id = ?");
-        $stmt->execute([$title, $description, $price, $_POST['currency'], $duration, $location, $image_url, $is_featured, $id]);
+        $stmt = $pdo->prepare("UPDATE tours SET title = ?, description = ?, price = ?, currency = ?, duration = ?, location = ?, image_url = ?, is_featured = ?, is_active = ? WHERE id = ?");
+        $stmt->execute([$title, $description, $price, $_POST['currency'], $duration, $location, $image_url, $is_featured, $is_active, $id]);
+
 
         // 2. Update Itinerary
         $pdo->prepare("DELETE FROM tour_itineraries WHERE tour_id = ?")->execute([$id]);
@@ -163,6 +167,18 @@ $features = $features->fetchAll();
 $dates = $pdo->prepare("SELECT * FROM tour_dates WHERE tour_id = ? ORDER BY start_date");
 $dates->execute([$id]);
 $dates = $dates->fetchAll();
+$edit_day = 1;
+$edit_night = 0;
+
+
+if (!empty($tour['duration'])) {
+    if (preg_match('/(\d+)\s*Gün/iu', $tour['duration'], $matches)) {
+        $edit_day = intval($matches[1]);
+    }
+    if (preg_match('/(\d+)\s*Gece/iu', $tour['duration'], $matches)) {
+        $edit_night = intval($matches[1]);
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -260,15 +276,48 @@ $dates = $dates->fetchAll();
                                         </div>
                                     </div>
                                     <div class="form-group" style="flex: 1;">
-                                        <label>Süre</label>
-                                        <input type="text" name="duration"
-                                            value="<?php echo htmlspecialchars($tour['duration']); ?>" required>
+                                        <label>Süre Detayı</label>
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            <div style="flex:1">
+                                                <div style="position: relative;">
+                                                    <input type="number" name="duration_day" min="1"
+                                                        value="<?php echo $edit_day; ?>" required
+                                                        style="padding-right: 35px;">
+                                                    <span
+                                                        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: #888;">Gün</span>
+                                                </div>
+                                            </div>
+                                            <div style="flex:1">
+                                                <div style="position: relative;">
+                                                    <input type="number" name="duration_night" min="0"
+                                                        value="<?php echo $edit_night; ?>" required
+                                                        style="padding-right: 40px;">
+                                                    <span
+                                                        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: #888;">Gece</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Lokasyon</label>
                                     <input type="text" name="location"
                                         value="<?php echo htmlspecialchars($tour['location']); ?>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tur Durumu</label>
+                                    <select name="is_active"
+                                        style="width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 5px; background-color: #fff;">
+
+                                        <option value="0" <?php echo ($tour['is_active'] == 0) ? 'selected' : ''; ?>>
+                                            🔒 Taslak (Pasif - Sitede Görünmez)
+                                        </option>
+
+                                        <option value="1" <?php echo ($tour['is_active'] == 1) ? 'selected' : ''; ?>>
+                                            ✅ Yayında (Aktif - Sitede Görünür)
+                                        </option>
+
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label>Öne Çıkarılan Tur?</label>
