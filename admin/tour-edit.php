@@ -47,12 +47,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // 2. Update Itinerary
         $pdo->prepare("DELETE FROM tour_itineraries WHERE tour_id = ?")->execute([$id]);
         if (isset($_POST['itinerary_title'])) {
-            $stmt = $pdo->prepare("INSERT INTO tour_itineraries (tour_id, day_number, title, description) VALUES (?, ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO tour_itineraries (tour_id, day_number, title, description, image_url, image_alt) VALUES (?, ?, ?, ?, ?, ?)");
             foreach ($_POST['itinerary_title'] as $key => $val) {
                 if (!empty($val)) {
                     $desc = $_POST['itinerary_desc'][$key];
-                    $day = $key + 1; // Auto-number days
-                    $stmt->execute([$id, $day, $val, $desc]);
+                    $day = $key + 1;
+                    $img_alt = $_POST['itinerary_alt'][$key] ?? '';
+
+                    // Check for new image upload
+                    $day_image = $_POST['itinerary_existing_image'][$key] ?? null;
+                    if (isset($_FILES['itinerary_image']['name'][$key]) && $_FILES['itinerary_image']['error'][$key] == 0) {
+                        $itin_dir = "../uploads/itinerary/";
+                        if (!file_exists($itin_dir))
+                            mkdir($itin_dir, 0777, true);
+                        $itin_filename = time() . '_' . $key . '_' . basename($_FILES['itinerary_image']['name'][$key]);
+                        $itin_target = $itin_dir . $itin_filename;
+                        if (move_uploaded_file($_FILES['itinerary_image']['tmp_name'][$key], $itin_target)) {
+                            $day_image = $itin_filename;
+                        }
+                    }
+
+                    $stmt->execute([$id, $day, $val, $desc, $day_image, $img_alt]);
                 }
             }
         }
@@ -161,8 +176,24 @@ $dates = $dates->fetchAll();
     <link rel="stylesheet" href="../assets/css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Quill.js Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
     <style>
         /* Page-specific overrides only */
+        .quill-editor {
+            background-color: #fff;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .ql-toolbar.ql-snow {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            background-color: #f8f9fa;
+        }
     </style>
 </head>
 
@@ -193,7 +224,7 @@ $dates = $dates->fetchAll();
                 </div>
             <?php endif; ?>
 
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" id="tourForm">
                 <!-- Tabs Navigation -->
                 <div class="tabs">
                     <button type="button" class="tab-btn active" onclick="openTab('general')">Genel Bilgiler</button>
@@ -267,8 +298,8 @@ $dates = $dates->fetchAll();
                         <div style="margin-bottom: 1.5rem;">
                             <h3 style="margin: 0 0 0.25rem 0; font-size: 1.1rem; color: #1a1a2e;">Gün Gün Tur Programı
                             </h3>
-                            <p style="margin: 0; font-size: 0.85rem; color: #888;">Her gün için başlık ve detaylı
-                                açıklama ekleyin. Sıralama otomatik numaralandırılır.</p>
+                            <p style="margin: 0; font-size: 0.85rem; color: #888;">Her gün için başlık, açıklama ve
+                                opsiyonel görsel ekleyin. Sıralama otomatik numaralandırılır.</p>
                         </div>
                         <div id="itinerary-container">
                             <?php $dayNum = 1;
@@ -289,14 +320,40 @@ $dates = $dates->fetchAll();
                                                 placeholder="Örn: İstanbul Havalimanı Buluşma ve Hareket"
                                                 value="<?php echo htmlspecialchars($it['title']); ?>" required>
                                         </div>
-                                        <div class="form-group" style="margin-bottom: 0;">
+                                        <div class="form-group" style="margin-bottom: 0.75rem;">
                                             <label
                                                 style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;"><i
                                                     class="fa-solid fa-align-left"
                                                     style="margin-right: 0.3rem; color: var(--primary-color);"></i>
                                                 Açıklama</label>
-                                            <textarea name="itinerary_desc[]" rows="3"
-                                                placeholder="Bu günün detaylı açıklamasını yazın..."><?php echo htmlspecialchars($it['description']); ?></textarea>
+                                            <!-- Quill Editor Container -->
+                                            <div class="quill-editor" style="height: 120px;"></div>
+                                            <textarea name="itinerary_desc[]"
+                                                style="display:none;"><?php echo htmlspecialchars($it['description']); ?></textarea>
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label
+                                                style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;"><i
+                                                    class="fa-solid fa-image"
+                                                    style="margin-right: 0.3rem; color: var(--primary-color);"></i>
+                                                Gün Görseli</label>
+                                            <input type="hidden" name="itinerary_existing_image[]"
+                                                value="<?php echo htmlspecialchars($it['image_url'] ?? ''); ?>">
+                                            <?php if (!empty($it['image_url'])): ?>
+                                                <img src="../uploads/itinerary/<?php echo htmlspecialchars($it['image_url']); ?>"
+                                                    class="itin-img-preview"
+                                                    style="width:100%; max-height:150px; object-fit:cover; border-radius:8px; margin-bottom:0.5rem;"
+                                                    alt="<?php echo htmlspecialchars($it['image_alt'] ?? ''); ?>">
+                                            <?php else: ?>
+                                                <img class="itin-img-preview" src="" alt=""
+                                                    style="display:none; width:100%; max-height:150px; object-fit:cover; border-radius:8px; margin-bottom:0.5rem;">
+                                            <?php endif; ?>
+                                            <input type="file" name="itinerary_image[]" accept="image/*"
+                                                style="font-size: 0.8rem; margin-bottom: 0.5rem;"
+                                                onchange="previewItineraryImage(this)">
+                                            <input type="text" name="itinerary_alt[]" placeholder="Görsel alt etiketi (SEO)"
+                                                value="<?php echo htmlspecialchars($it['image_alt'] ?? ''); ?>"
+                                                style="font-size: 0.85rem;">
                                         </div>
                                     </div>
                                     <button type="button" class="itinerary-card-delete" title="Bu günü sil"
@@ -366,8 +423,10 @@ $dates = $dates->fetchAll();
                     <!-- 4. KEY FEATURES TAB -->
                     <div id="features" class="tab-content">
                         <div style="margin-bottom: 1.5rem;">
-                            <h3 style="margin: 0 0 0.25rem 0; font-size: 1.1rem; color: #1a1a2e;">Öne Çıkan Özellikler</h3>
-                            <p style="margin: 0; font-size: 0.85rem; color: #888;">Tur detay sayfasında görünecek 4 temel özelliği buraya ekleyin (Uçuş, Otel, vb).</p>
+                            <h3 style="margin: 0 0 0.25rem 0; font-size: 1.1rem; color: #1a1a2e;">Öne Çıkan Özellikler
+                            </h3>
+                            <p style="margin: 0; font-size: 0.85rem; color: #888;">Tur detay sayfasında görünecek 4
+                                temel özelliği buraya ekleyin (Uçuş, Otel, vb).</p>
                         </div>
                         <div id="features-container">
                             <?php foreach ($features as $feat): ?>
@@ -375,18 +434,22 @@ $dates = $dates->fetchAll();
                                     <div class="feature-card-content">
                                         <!-- Icon Pick -->
                                         <div style="width: 140px;">
-                                            <label style="font-size: 0.75rem; font-weight: 700; color: #666; margin-bottom: 0.4rem; display: block; text-transform: uppercase; letter-spacing: 0.5px;">İKON SEÇİMİ</label>
+                                            <label
+                                                style="font-size: 0.75rem; font-weight: 700; color: #666; margin-bottom: 0.4rem; display: block; text-transform: uppercase; letter-spacing: 0.5px;">İKON
+                                                SEÇİMİ</label>
                                             <div class="feature-icon-preview" style="margin-bottom: 0.8rem;">
                                                 <i class="<?php echo $feat['icon']; ?>"></i>
                                             </div>
-                                            <select name="feature_icon[]" style="width: 100%; padding: 0.5rem; font-size: 0.85rem; border: 1px solid #ddd; border-radius: 6px; background: #fafafa;"
+                                            <select name="feature_icon[]"
+                                                style="width: 100%; padding: 0.5rem; font-size: 0.85rem; border: 1px solid #ddd; border-radius: 6px; background: #fafafa;"
                                                 onchange="this.previousElementSibling.querySelector('i').className = this.value">
                                                 <option value="fa-solid fa-plane" <?php echo $feat['icon'] == 'fa-solid fa-plane' ? 'selected' : ''; ?>>✈️ Uçuş</option>
                                                 <option value="fa-solid fa-hotel" <?php echo $feat['icon'] == 'fa-solid fa-hotel' ? 'selected' : ''; ?>>🏨 Otel</option>
                                                 <option value="fa-solid fa-utensils" <?php echo $feat['icon'] == 'fa-solid fa-utensils' ? 'selected' : ''; ?>>🍽️ Yemek</option>
                                                 <option value="fa-solid fa-users" <?php echo $feat['icon'] == 'fa-solid fa-users' ? 'selected' : ''; ?>>👥 Rehber</option>
                                                 <option value="fa-solid fa-bus" <?php echo $feat['icon'] == 'fa-solid fa-bus' ? 'selected' : ''; ?>>🚌 Transfer</option>
-                                                <option value="fa-solid fa-calendar-days" <?php echo $feat['icon'] == 'fa-solid fa-calendar-days' ? 'selected' : ''; ?>>📅 Tarih</option>
+                                                <option value="fa-solid fa-calendar-days" <?php echo $feat['icon'] == 'fa-solid fa-calendar-days' ? 'selected' : ''; ?>>📅
+                                                    Tarih</option>
                                                 <option value="fa-solid fa-ticket" <?php echo $feat['icon'] == 'fa-solid fa-ticket' ? 'selected' : ''; ?>>🎟️ Bilet</option>
                                                 <option value="fa-solid fa-passport" <?php echo $feat['icon'] == 'fa-solid fa-passport' ? 'selected' : ''; ?>>🛂 Vize</option>
                                                 <option value="fa-solid fa-camera" <?php echo $feat['icon'] == 'fa-solid fa-camera' ? 'selected' : ''; ?>>📷 Fotoğraf</option>
@@ -396,14 +459,17 @@ $dates = $dates->fetchAll();
                                         <!-- Text Fields -->
                                         <div class="feature-form-grid">
                                             <div>
-                                                <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Başlık</label>
+                                                <label
+                                                    style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Başlık</label>
                                                 <input type="text" name="feature_title[]"
                                                     value="<?php echo htmlspecialchars($feat['title']); ?>" required
                                                     placeholder="Örn: Uçuş Dahil"
                                                     style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
                                             </div>
                                             <div>
-                                                <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Alt Başlık</label>
+                                                <label
+                                                    style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Alt
+                                                    Başlık</label>
                                                 <input type="text" name="feature_subtitle[]"
                                                     value="<?php echo htmlspecialchars($feat['subtitle']); ?>"
                                                     placeholder="Örn: THY ile Gidiş-Dönüş"
@@ -416,7 +482,8 @@ $dates = $dates->fetchAll();
                                 </div>
                             <?php endforeach; ?>
                         </div>
-                        <button type="button" class="btn-add" onclick="addFeatureRow()" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 2px dashed #ccc; background: #fafafa; color: #666; border-radius: 10px; cursor: pointer; transition: all 0.3s;">
+                        <button type="button" class="btn-add" onclick="addFeatureRow()"
+                            style="width: 100%; padding: 0.85rem; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 2px dashed #ccc; background: #fafafa; color: #666; border-radius: 10px; cursor: pointer; transition: all 0.3s;">
                             <i class="fa-solid fa-plus"></i> Yeni Özellik Ekle
                         </button>
                     </div>
@@ -424,8 +491,10 @@ $dates = $dates->fetchAll();
                     <!-- 5. DATES TAB -->
                     <div id="dates" class="tab-content">
                         <div style="margin-bottom: 1.5rem;">
-                            <h3 style="margin: 0 0 0.25rem 0; font-size: 1.1rem; color: #1a1a2e;">Tarih & Fiyat Seçenekleri</h3>
-                            <p style="margin: 0; font-size: 0.85rem; color: #888;">Bu tur için geçerli tarih aralıklarını, fiyatları ve kontenjan bilgilerini girin.</p>
+                            <h3 style="margin: 0 0 0.25rem 0; font-size: 1.1rem; color: #1a1a2e;">Tarih & Fiyat
+                                Seçenekleri</h3>
+                            <p style="margin: 0; font-size: 0.85rem; color: #888;">Bu tur için geçerli tarih
+                                aralıklarını, fiyatları ve kontenjan bilgilerini girin.</p>
                         </div>
                         <div id="dates-container">
                             <?php foreach ($dates as $date): ?>
@@ -437,20 +506,28 @@ $dates = $dates->fetchAll();
 
                                         <div class="date-form-grid">
                                             <div>
-                                                <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Gidiş Tarihi</label>
-                                                <input type="date" name="date_start[]" value="<?php echo $date['start_date']; ?>"
+                                                <label
+                                                    style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Gidiş
+                                                    Tarihi</label>
+                                                <input type="date" name="date_start[]"
+                                                    value="<?php echo $date['start_date']; ?>"
                                                     style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
                                             </div>
                                             <div>
-                                                <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Dönüş Tarihi</label>
-                                                <input type="date" name="date_end[]" value="<?php echo $date['end_date']; ?>"
+                                                <label
+                                                    style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Dönüş
+                                                    Tarihi</label>
+                                                <input type="date" name="date_end[]"
+                                                    value="<?php echo $date['end_date']; ?>"
                                                     style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
                                             </div>
 
                                             <div>
-                                                <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Fiyat</label>
+                                                <label
+                                                    style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Fiyat</label>
                                                 <div class="price-input-group">
-                                                    <input type="number" name="date_price[]" value="<?php echo $date['price']; ?>" step="0.01">
+                                                    <input type="number" name="date_price[]"
+                                                        value="<?php echo $date['price']; ?>" step="0.01">
                                                     <select name="date_currency[]">
                                                         <option value="EUR" <?php echo ($date['currency'] ?? 'EUR') == 'EUR' ? 'selected' : ''; ?>>EUR</option>
                                                         <option value="USD" <?php echo ($date['currency'] ?? '') == 'USD' ? 'selected' : ''; ?>>USD</option>
@@ -460,14 +537,18 @@ $dates = $dates->fetchAll();
                                                 </div>
                                             </div>
                                             <div>
-                                                <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Kontenjan</label>
-                                                <input type="number" name="date_quota[]" value="<?php echo $date['quota']; ?>"
+                                                <label
+                                                    style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Kontenjan</label>
+                                                <input type="number" name="date_quota[]"
+                                                    value="<?php echo $date['quota']; ?>"
                                                     style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
                                             </div>
 
                                             <div class="date-form-full">
                                                 <div style="grid-column: span 2;">
-                                                    <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Konaklama / Otel Bilgisi</label>
+                                                    <label
+                                                        style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Konaklama
+                                                        / Otel Bilgisi</label>
                                                     <input type="text" name="date_stars[]"
                                                         value="<?php echo htmlspecialchars($date['hotel_stars']); ?>"
                                                         placeholder="Örn: 5 Yıldız Otel, Oda Kahvaltı"
@@ -481,7 +562,8 @@ $dates = $dates->fetchAll();
                                 </div>
                             <?php endforeach; ?>
                         </div>
-                        <button type="button" class="btn-add" onclick="addDateRow()" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 2px dashed #ccc; background: #fafafa; color: #666; border-radius: 10px; cursor: pointer; transition: all 0.3s;">
+                        <button type="button" class="btn-add" onclick="addDateRow()"
+                            style="width: 100%; padding: 0.85rem; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 2px dashed #ccc; background: #fafafa; color: #666; border-radius: 10px; cursor: pointer; transition: all 0.3s;">
                             <i class="fa-solid fa-plus"></i> Yeni Tarih Ekle
                         </button>
                     </div>
@@ -512,26 +594,54 @@ $dates = $dates->fetchAll();
             div.innerHTML = `
                 <div class="itinerary-card-badge">
                     <span class="day-num">${dayNum}</span>
-                    <span class="day-label">GÜN</span>
+                    <span class="day-label">G\u00dcN</span>
                 </div>
                 <div class="itinerary-card-body">
                     <div class="form-group" style="margin-bottom: 0.75rem;">
-                        <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;"><i class="fa-solid fa-heading" style="margin-right: 0.3rem; color: var(--primary-color);"></i> Gün Başlığı</label>
-                        <input type="text" name="itinerary_title[]" placeholder="Örn: Şehir Turu ve Müze Ziyareti" required>
+                        <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;"><i class="fa-solid fa-heading" style="margin-right: 0.3rem; color: var(--primary-color);"></i> G\u00fcn Ba\u015fl\u0131\u011f\u0131</label>
+                        <input type="text" name="itinerary_title[]" placeholder="\u00d6rn: \u015eehir Turu ve M\u00fcze Ziyareti" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;"><i class="fa-solid fa-align-left" style="margin-right: 0.3rem; color: var(--primary-color);"></i> A\u00e7\u0131klama</label>
+                        <!-- Quill Editor Container -->
+                        <div class="quill-editor" style="height: 120px;"></div>
+                        <textarea name="itinerary_desc[]" style="display:none;"></textarea>
                     </div>
                     <div class="form-group" style="margin-bottom: 0;">
-                        <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;"><i class="fa-solid fa-align-left" style="margin-right: 0.3rem; color: var(--primary-color);"></i> Açıklama</label>
-                        <textarea name="itinerary_desc[]" rows="3" placeholder="Bu günün detaylı açıklamasını yazın..."></textarea>
+                        <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;"><i class="fa-solid fa-image" style="margin-right: 0.3rem; color: var(--primary-color);"></i> G\u00fcn G\u00f6rseli</label>
+                        <input type="hidden" name="itinerary_existing_image[]" value="">
+                        <img class="itin-img-preview" src="" alt="" style="display:none; width:100%; max-height:150px; object-fit:cover; border-radius:8px; margin-bottom:0.5rem;">
+                        <input type="file" name="itinerary_image[]" accept="image/*" style="font-size: 0.8rem; margin-bottom: 0.5rem;" onchange="previewItineraryImage(this)">
+                        <input type="text" name="itinerary_alt[]" placeholder="G\u00f6rsel alt etiketi (SEO)" style="font-size: 0.85rem;">
                     </div>
                 </div>
-                <button type="button" class="itinerary-card-delete" title="Bu günü sil" onclick="removeItineraryCard(this)"><i class="fa-solid fa-trash-can"></i></button>
+                <button type="button" class="itinerary-card-delete" title="Bu g\u00fcn\u00fc sil" onclick="removeItineraryCard(this)"><i class="fa-solid fa-trash-can"></i></button>
             `;
             container.appendChild(div);
-            // Scroll to the new card
             div.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            // Focus the title input
             div.querySelector('input[name="itinerary_title[]"]').focus();
+
+            // Initialize Quill for the newly added row
+            const newQuillEditor = div.querySelector('.quill-editor');
+            const newTextarea = div.querySelector('textarea[name="itinerary_desc[]"]');
+            initSingleQuill(newQuillEditor, newTextarea);
         }
+
+        function previewItineraryImage(input) {
+            const preview = input.parentElement.querySelector('.itin-img-preview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+                preview.src = '';
+            }
+        }
+
 
         function removeItineraryCard(btn) {
             const card = btn.closest('.itinerary-card');
@@ -679,6 +789,60 @@ $dates = $dates->fetchAll();
                 card.remove();
             }, 280);
         }
+
+        // Quill Initialization Logic
+        const allQuillInstances = [];
+
+        const quillOptions = {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['link'],
+                    ['clean']
+                ]
+            }
+        };
+
+        function initSingleQuill(editorEl, textareaEl) {
+            const quill = new Quill(editorEl, quillOptions);
+
+            // If the textarea already has HTML content, load it into Quill
+            if (textareaEl.value.trim() !== '') {
+                quill.root.innerHTML = textareaEl.value;
+            }
+
+            // Sync on text change
+            quill.on('text-change', function () {
+                textareaEl.value = quill.root.innerHTML;
+            });
+
+            allQuillInstances.push({
+                quill: quill,
+                textarea: textareaEl
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const itineraryEditors = document.querySelectorAll('#itinerary-container .quill-editor');
+            const itineraryTextareas = document.querySelectorAll('#itinerary-container textarea[name="itinerary_desc[]"]');
+
+            itineraryEditors.forEach((editorEl, index) => {
+                const textareaEl = itineraryTextareas[index];
+                if (textareaEl) {
+                    initSingleQuill(editorEl, textareaEl);
+                }
+            });
+        });
+
+        // Sync right before form submission to ensure latest content is in textarea
+        document.getElementById('tourForm').addEventListener('submit', function () {
+            allQuillInstances.forEach(instance => {
+                instance.textarea.value = instance.quill.root.innerHTML;
+            });
+        });
     </script>
 
 </body>

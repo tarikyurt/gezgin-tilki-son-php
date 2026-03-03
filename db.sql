@@ -50,6 +50,8 @@ CREATE TABLE IF NOT EXISTS tour_itineraries (
     day_number INT NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
+    image_url VARCHAR(255) DEFAULT NULL,
+    image_alt VARCHAR(255) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (tour_id) REFERENCES tours(id) ON DELETE CASCADE
 );

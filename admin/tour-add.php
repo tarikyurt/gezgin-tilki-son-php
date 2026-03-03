@@ -37,17 +37,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // 2. Insert Itinerary
         if (isset($_POST['itinerary_title'])) {
-            $stmt = $pdo->prepare("INSERT INTO tour_itineraries (tour_id, day_number, title, description) VALUES (?, ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO tour_itineraries (tour_id, day_number, title, description, image_url, image_alt) VALUES (?, ?, ?, ?, ?, ?)");
             foreach ($_POST['itinerary_title'] as $key => $val) {
                 if (!empty($val)) {
                     $desc = $_POST['itinerary_desc'][$key];
-                    $day = $key + 1; // Auto-number days
-                    $stmt->execute([$tour_id, $day, $val, $desc]);
+                    $day = $key + 1;
+                    $img_alt = $_POST['itinerary_alt'][$key] ?? '';
+
+                    // Itinerary day image upload
+                    $day_image = null;
+                    if (isset($_FILES['itinerary_image']['name'][$key]) && $_FILES['itinerary_image']['error'][$key] == 0) {
+                        $itin_dir = "../uploads/itinerary/";
+                        if (!file_exists($itin_dir))
+                            mkdir($itin_dir, 0777, true);
+                        $itin_filename = time() . '_' . $key . '_' . basename($_FILES['itinerary_image']['name'][$key]);
+                        $itin_target = $itin_dir . $itin_filename;
+                        if (move_uploaded_file($_FILES['itinerary_image']['tmp_name'][$key], $itin_target)) {
+                            $day_image = $itin_filename;
+                        }
+                    }
+
+                    $stmt->execute([$tour_id, $day, $val, $desc, $day_image, $img_alt]);
                 }
             }
         }
 
-        // 3. Insert Inclusions
         // 3. Insert Inclusions
 
         // Process Included Items
@@ -117,8 +131,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="../assets/css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Quill.js Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
     <style>
         /* Page-specific overrides only */
+        .quill-editor {
+            background-color: #fff;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .ql-toolbar.ql-snow {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            background-color: #f8f9fa;
+        }
     </style>
 </head>
 
@@ -144,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             <?php endif; ?>
 
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" id="tourForm">
                 <!-- Tabs Navigation -->
                 <div class="tabs">
                     <button type="button" class="tab-btn active" onclick="openTab('general')">Genel Bilgiler</button>
@@ -206,15 +236,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <!-- 2. ITINERARY TAB -->
                     <div id="itinerary" class="tab-content">
                         <div id="itinerary-container">
-                            <div class="dynamic-row">
+                            <div class="dynamic-row" style="flex-wrap: wrap;">
                                 <div style="width: 50px; font-weight: bold; padding-top: 0.5rem; text-align: center;">1.
                                     Gün</div>
-                                <div style="flex: 1;">
+                                <div style="flex: 1; min-width: 250px;">
                                     <input type="text" name="itinerary_title[]"
                                         placeholder="Gün Başlığı (Örn: İstanbul'a Varış)" required
                                         style="margin-bottom: 0.5rem;">
-                                    <textarea name="itinerary_desc[]" rows="2"
-                                        placeholder="Detaylı açıklama..."></textarea>
+                                    <!-- Quill Editor Container -->
+                                    <div class="quill-editor" style="height: 120px;"></div>
+                                    <textarea name="itinerary_desc[]" style="display:none;"></textarea>
+                                </div>
+                                <div style="width: 220px;">
+                                    <label
+                                        style="font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin-bottom: 0.25rem;"><i
+                                            class="fa-solid fa-image"
+                                            style="margin-right: 0.3rem; color: var(--primary-color);"></i> Gün
+                                        Görseli</label>
+                                    <input type="file" name="itinerary_image[]" accept="image/*"
+                                        style="font-size: 0.8rem; margin-bottom: 0.5rem;"
+                                        onchange="previewItineraryImage(this)">
+                                    <img class="itin-img-preview" src="" alt=""
+                                        style="display:none; width:100%; max-height:120px; object-fit:cover; border-radius:6px; margin-bottom:0.5rem;">
+                                    <input type="text" name="itinerary_alt[]" placeholder="Görsel alt etiketi (SEO)"
+                                        style="font-size: 0.85rem;">
                                 </div>
                                 <button type="button" class="btn-remove"
                                     onclick="this.parentElement.remove()">Sil</button>
@@ -318,15 +363,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             const dayCount = container.children.length + 1;
             const div = document.createElement('div');
             div.className = 'dynamic-row';
+            div.style.flexWrap = 'wrap';
             div.innerHTML = `
-        <div style="width: 50px; font-weight: bold; padding-top: 0.5rem; text-align: center;">\${dayCount}. Gün</div>
-        <div style="flex: 1;">
+        <div style="width: 50px; font-weight: bold; padding-top: 0.5rem; text-align: center;">${dayCount}. Gün</div>
+        <div style="flex: 1; min-width: 250px;">
             <input type="text" name="itinerary_title[]" placeholder="Gün Başlığı" required style="margin-bottom: 0.5rem;">
-            <textarea name="itinerary_desc[]" rows="2" placeholder="Detaylı açıklama..."></textarea>
+            <!-- Quill Editor Container -->
+            <div class="quill-editor" style="height: 120px;"></div>
+            <textarea name="itinerary_desc[]" style="display:none;"></textarea>
+        </div>
+        <div style="width: 220px;">
+            <label style="font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin-bottom: 0.25rem;"><i class="fa-solid fa-image" style="margin-right: 0.3rem; color: var(--primary-color);"></i> Gün Görseli</label>
+            <input type="file" name="itinerary_image[]" accept="image/*" style="font-size: 0.8rem; margin-bottom: 0.5rem;" onchange="previewItineraryImage(this)">
+            <img class="itin-img-preview" src="" alt="" style="display:none; width:100%; max-height:120px; object-fit:cover; border-radius:6px; margin-bottom:0.5rem;">
+            <input type="text" name="itinerary_alt[]" placeholder="Görsel alt etiketi (SEO)" style="font-size: 0.85rem;">
         </div>
         <button type="button" class="btn-remove" onclick="this.parentElement.remove()">Sil</button>
     `;
             container.appendChild(div);
+            
+            // Initialize Quill for the newly added row
+            const newQuillEditor = div.querySelector('.quill-editor');
+            const newTextarea = div.querySelector('textarea[name="itinerary_desc[]"]');
+            initSingleQuill(newQuillEditor, newTextarea);
+        }
+
+        function previewItineraryImage(input) {
+            const preview = input.parentElement.querySelector('.itin-img-preview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+                preview.src = '';
+            }
         }
 
         function addInclusionRow(type) {
@@ -390,6 +464,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     `;
             document.getElementById('dates-container').appendChild(div);
         }
+
+        // Quill Initialization Logic
+        const allQuillInstances = [];
+        
+        const quillOptions = {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    ['link'],
+                    ['clean']
+                ]
+            }
+        };
+
+        function initSingleQuill(editorEl, textareaEl) {
+            const quill = new Quill(editorEl, quillOptions);
+            
+            // If the textarea already has HTML content, load it into Quill
+            if (textareaEl.value.trim() !== '') {
+                quill.root.innerHTML = textareaEl.value;
+            }
+            
+            // Sync on text change
+            quill.on('text-change', function() {
+                textareaEl.value = quill.root.innerHTML;
+            });
+            
+            allQuillInstances.push({
+                quill: quill,
+                textarea: textareaEl
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const itineraryEditors = document.querySelectorAll('#itinerary-container .quill-editor');
+            const itineraryTextareas = document.querySelectorAll('#itinerary-container textarea[name="itinerary_desc[]"]');
+            
+            itineraryEditors.forEach((editorEl, index) => {
+                const textareaEl = itineraryTextareas[index];
+                if (textareaEl) {
+                    initSingleQuill(editorEl, textareaEl);
+                }
+            });
+        });
+
+        // Sync right before form submission to ensure latest content is in textarea
+        document.getElementById('tourForm').addEventListener('submit', function() {
+            allQuillInstances.forEach(instance => {
+                instance.textarea.value = instance.quill.root.innerHTML;
+            });
+        });
     </script>
 
 </body>

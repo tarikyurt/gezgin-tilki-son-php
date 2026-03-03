@@ -225,7 +225,14 @@ include 'includes/header.php';
                         <i class="fa-solid fa-chevron-down"></i>
                     </div>
                     <div class="itinerary-body" style="display: none;">
-                        <?php echo nl2br(htmlspecialchars($day['description'])); ?>
+                        <?php if (!empty($day['image_url'])): ?>
+                            <img src="uploads/itinerary/<?php echo htmlspecialchars($day['image_url']); ?>"
+                                alt="<?php echo htmlspecialchars($day['image_alt'] ?? $day['title']); ?>"
+                                style="width: 100%; max-height: 350px; object-fit: cover; border-radius: 10px; margin-bottom: 1rem;">
+                        <?php endif; ?>
+                        <div class="quill-content">
+                            <?php echo $day['description']; ?>
+                        </div>
                     </div>
                 </div>
             <?php endforeach; ?>

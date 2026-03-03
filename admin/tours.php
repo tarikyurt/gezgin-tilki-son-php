@@ -35,6 +35,9 @@ if ($is_ajax) {
             if (hasPermission('tour_edit')) {
                 echo '<a href="tour-edit.php?id=' . $tour['id'] . '" class="action-btn edit-btn"><i class="fa-solid fa-pen"></i> Düzenle</a>';
             }
+            if (hasPermission('tour_add')) {
+                echo '<a href="tour-duplicate.php?id=' . $tour['id'] . '" class="action-btn duplicate-btn"><i class="fa-solid fa-copy"></i> Çoğalt</a>';
+            }
             if (hasPermission('tour_delete')) {
                 echo '<a href="tour-delete.php?id=' . $tour['id'] . '" class="action-btn delete-btn" onclick="return confirm(\'Bu turu silmek istediğinize emin misiniz?\')"><i class="fa-solid fa-trash"></i> Sil</a>';
             }
@@ -56,7 +59,7 @@ if ($is_ajax) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Turlar - Admin Panel</title>
     <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="../assets/css/admin.css?v=2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -112,6 +115,10 @@ if ($is_ajax) {
                                     <?php if (hasPermission('tour_edit')): ?>
                                         <a href="tour-edit.php?id=<?php echo $tour['id']; ?>" class="action-btn edit-btn"><i
                                                 class="fa-solid fa-pen"></i> Düzenle</a>
+                                    <?php endif; ?>
+                                    <?php if (hasPermission('tour_add')): ?>
+                                        <a href="tour-duplicate.php?id=<?php echo $tour['id']; ?>"
+                                            class="action-btn duplicate-btn"><i class="fa-solid fa-copy"></i> Çoğalt</a>
                                     <?php endif; ?>
                                     <?php if (hasPermission('tour_delete')): ?>
                                         <a href="tour-delete.php?id=<?php echo $tour['id']; ?>" class="action-btn delete-btn"
