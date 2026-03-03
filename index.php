@@ -167,66 +167,120 @@ include 'includes/header.php'; ?>
 </section>
 
 <!-- Featured Tours Section -->
-<section class="featured-tours" style="background-color: var(--bg-light);">
-    <div class="container">
-        <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
-            <h2>Öne Çıkan Turlar</h2>
-            <p>Sizin için özel olarak seçtiklerimiz</p>
-        </div>
+<?php
+require_once 'includes/db.php';
+$stmt = $pdo->query("
+    SELECT t.*, 
+           nd.quota AS next_quota, 
+           nd.start_date AS next_start, 
+           nd.end_date AS next_end,
+           nd.price AS next_price,
+           nd.currency AS next_currency
+    FROM tours t
+    LEFT JOIN (
+        SELECT td1.* FROM tour_dates td1
+        INNER JOIN (
+            SELECT tour_id, MIN(start_date) AS min_date
+            FROM tour_dates
+            WHERE start_date >= CURDATE()
+            GROUP BY tour_id
+        ) td2 ON td1.tour_id = td2.tour_id AND td1.start_date = td2.min_date
+    ) nd ON t.id = nd.tour_id
+    WHERE t.is_featured = 1
+    ORDER BY t.created_at DESC
+    LIMIT 6
+");
+$featured_tours = $stmt->fetchAll();
+?>
 
-        <?php
-        require_once 'includes/db.php';
-        // Put this query at the top of the file ideally, but here works for now
-        $stmt = $pdo->query("SELECT * FROM tours ORDER BY created_at DESC LIMIT 3");
-        $featured_tours = $stmt->fetchAll();
-        ?>
+<?php if (!empty($featured_tours)): ?>
+    <section class="featured-tours-section">
+        <div class="container">
+            <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+                <span class="section-label"><i class="fa-solid fa-fire"></i> Öne Çıkan</span>
+                <h2>Sizin İçin Seçtiğimiz Turlar</h2>
+                <p>En beğenilen ve özel olarak öne çıkardığımız tur fırsatları</p>
+            </div>
 
-        <div class="tours-grid">
-            <?php foreach ($featured_tours as $tour): ?>
-                <div class="tour-card"
-                    style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.1); transition: transform 0.3s;">
-                    <div class="tour-img" style="height: 200px; position: relative;">
-                        <img src="uploads/<?php echo $tour['image_url']; ?>"
-                            alt="<?php echo htmlspecialchars($tour['title']); ?>"
-                            style="width: 100%; height: 100%; object-fit: cover;">
-                        <span
-                            style="position: absolute; top: 1rem; right: 1rem; background: var(--primary-color); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">Popüler</span>
-                    </div>
-                    <div class="tour-info" style="padding: 1.5rem;">
-                        <div
-                            style="display: flex; justify-content: space-between; color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">
-                            <span><i class="fa-regular fa-clock"></i>
-                                <?php echo htmlspecialchars($tour['duration']); ?></span>
-                            <span><i class="fa-solid fa-location-dot"></i>
-                                <?php echo htmlspecialchars($tour['location']); ?></span>
+            <div class="featured-tours-grid">
+                <?php foreach ($featured_tours as $tour):
+                    $remaining = $tour['next_quota'] ?? null;
+                    $nextStart = $tour['next_start'] ?? null;
+                    $nextEnd = $tour['next_end'] ?? null;
+
+                    // Format date for urgency badge
+                    $urgencyDate = '';
+                    if ($nextStart && $nextEnd) {
+                        $months = [
+                            '01' => 'Oca',
+                            '02' => 'Şub',
+                            '03' => 'Mar',
+                            '04' => 'Nis',
+                            '05' => 'May',
+                            '06' => 'Haz',
+                            '07' => 'Tem',
+                            '08' => 'Ağu',
+                            '09' => 'Eyl',
+                            '10' => 'Eki',
+                            '11' => 'Kas',
+                            '12' => 'Ara'
+                        ];
+                        $s = new DateTime($nextStart);
+                        $e = new DateTime($nextEnd);
+                        $urgencyDate = $s->format('d') . ' ' . $months[$s->format('m')] . ' - ' . $e->format('d') . ' ' . $months[$e->format('m')];
+                    }
+                    ?>
+                    <a href="tour-detail.php?id=<?php echo $tour['id']; ?>" class="featured-tour-card">
+                        <div class="featured-tour-img">
+                            <img src="uploads/<?php echo $tour['image_url']; ?>"
+                                alt="<?php echo htmlspecialchars($tour['title']); ?>">
+                            <div class="featured-tour-overlay"></div>
+                            <span class="featured-badge"><i class="fa-solid fa-star"></i> Öne Çıkan</span>
+                            <div class="featured-tour-price">
+                                <?php echo formatCurrency($tour['price'], $tour['currency'] ?? 'EUR'); ?>
+                                <small>'den başlayan</small>
+                            </div>
                         </div>
-                        <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">
-                            <?php echo htmlspecialchars($tour['title']); ?>
-                        </h3>
-                        <p
-                            style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                            <?php echo htmlspecialchars($tour['description']); ?>
-                        </p>
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 1rem;">
-                            <span
-                                style="font-weight: 700; color: var(--secondary-color); font-size: 1.25rem;"><?php echo formatCurrency($tour['price'], $tour['currency'] ?? 'EUR'); ?></span>
-                            <a href="tour-detail.php?id=<?php echo $tour['id']; ?>"
-                                style="color: var(--primary-color); font-weight: 600;">İncele <i
-                                    class="fa-solid fa-arrow-right"></i></a>
+                        <div class="featured-tour-body">
+                            <div class="featured-tour-meta">
+                                <span><i class="fa-regular fa-clock"></i>
+                                    <?php echo htmlspecialchars($tour['duration']); ?></span>
+                                <span><i class="fa-solid fa-location-dot"></i>
+                                    <?php echo htmlspecialchars($tour['location']); ?></span>
+                            </div>
+                            <h3 class="featured-tour-title"><?php echo htmlspecialchars($tour['title']); ?></h3>
+                            <p class="featured-tour-desc"><?php echo htmlspecialchars($tour['description']); ?></p>
+                            <?php if ($remaining !== null && $remaining <= 5 && $remaining > 0): ?>
+                                <div class="featured-tour-urgency">
+                                    <i class="fa-solid fa-fire-flame-curved"></i>
+                                    <span>
+                                        <?php if (!empty($urgencyDate)): ?>
+                                            <strong><?php echo $urgencyDate; ?></strong> tarihinde son
+                                            <strong><?php echo $remaining; ?></strong> yer!
+                                        <?php else: ?>
+                                            Bu turda son <strong><?php echo $remaining; ?></strong> yer!
+                                        <?php endif; ?>
+                                    </span>
+                                </div>
+                            <?php endif; ?>
+                            <div class="featured-tour-footer">
+                                <div class="featured-tour-cta">
+                                    Turu İncele <i class="fa-solid fa-arrow-right"></i>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
 
-        <div style="text-align: center; margin-top: 3rem;">
-            <a href="tours.php" class="btn-primary"
-                style="background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color);">Tüm
-                Turları Gör</a>
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="tours.php" class="btn-primary"
+                    style="background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color);">Tüm
+                    Turları Gör</a>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
+<?php endif; ?>
 
 <!-- Testimonials Section -->
 <section class="testimonials">

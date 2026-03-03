@@ -185,9 +185,17 @@ include 'includes/header.php';
 <!-- 3. Day-by-Day Itinerary Section -->
 <section class="itinerary-section">
     <div class="container">
-        <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+        <div class="section-header" style="text-align: center; margin-bottom: 1.5rem;">
             <span>TUR PROGRAMI</span>
             <h2>Gün Gün Gezi Rotası</h2>
+        </div>
+
+        <!-- Email CTA Button -->
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+            <button type="button" class="email-itinerary-btn" onclick="openEmailModal()">
+                <i class="fa-solid fa-envelope"></i>
+                Tur Programını Mail ile Al
+            </button>
         </div>
 
         <div class="itinerary-list">
@@ -224,6 +232,40 @@ include 'includes/header.php';
         </div>
     </div>
 </section>
+
+<!-- Email Modal -->
+<div id="emailModal" class="email-modal-overlay" style="display: none;"
+    onclick="if(event.target===this) closeEmailModal()">
+    <div class="email-modal">
+        <button type="button" class="email-modal-close" onclick="closeEmailModal()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="email-modal-icon">
+            <i class="fa-solid fa-paper-plane"></i>
+        </div>
+        <h3>Tur Programını Mail ile Al</h3>
+        <p>E-posta adresinizi girin, <strong><?php echo htmlspecialchars($tour['title']); ?></strong> turunun detaylı
+            programını hemen gönderelim.</p>
+
+        <form id="emailForm" onsubmit="sendItinerary(event)">
+            <div class="email-input-group">
+                <i class="fa-solid fa-at"></i>
+                <input type="email" id="emailInput" placeholder="ornek@email.com" required autocomplete="email">
+            </div>
+            <button type="submit" class="email-send-btn" id="emailSendBtn">
+                <span class="btn-text"><i class="fa-solid fa-paper-plane"></i> Gönder</span>
+                <span class="btn-loading" style="display: none;"><i class="fa-solid fa-spinner fa-spin"></i>
+                    Gönderiliyor...</span>
+            </button>
+        </form>
+
+        <div id="emailResult" style="display: none;"></div>
+
+        <p class="email-modal-note">
+            <i class="fa-solid fa-shield-halved"></i> E-posta adresiniz sadece bu işlem için kullanılır.
+        </p>
+    </div>
+</div>
 
 <!-- 4. Included / Not Included Section -->
 <section class="inclusions-section">
@@ -344,7 +386,7 @@ include 'includes/header.php';
                                             <div class="fomo-text"
                                                 style="font-size: 0.75rem; color: #dc3545; font-weight: 700; margin-top: 4px; display: flex; align-items: center; gap: 4px; animation: pulse 2s infinite;">
                                                 <i class="fa-solid fa-fire-flame-curved"></i>
-                                                Bu fiyata son <?php echo $remaining; ?> koltuk!
+                                                Bu fiyata son <?php echo $remaining; ?> yer!
                                             </div>
                                         <?php endif; ?>
                                     </div>
@@ -416,6 +458,76 @@ include 'includes/header.php';
             }
         });
     });
+
+    // Email Modal Functions
+    const TOUR_ID = <?php echo $tour['id']; ?>;
+
+    function openEmailModal() {
+        const modal = document.getElementById('emailModal');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => document.getElementById('emailInput').focus(), 300);
+        // Reset state
+        document.getElementById('emailForm').style.display = 'block';
+        document.getElementById('emailResult').style.display = 'none';
+        document.getElementById('emailInput').value = '';
+    }
+
+    function closeEmailModal() {
+        document.getElementById('emailModal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeEmailModal();
+    });
+
+    function sendItinerary(e) {
+        e.preventDefault();
+        const email = document.getElementById('emailInput').value;
+        const btn = document.getElementById('emailSendBtn');
+        const btnText = btn.querySelector('.btn-text');
+        const btnLoading = btn.querySelector('.btn-loading');
+        const resultDiv = document.getElementById('emailResult');
+
+        // Loading state
+        btn.disabled = true;
+        btnText.style.display = 'none';
+        btnLoading.style.display = 'inline-flex';
+
+        const formData = new FormData();
+        formData.append('email', email);
+        formData.append('tour_id', TOUR_ID);
+
+        fetch('api/send-itinerary.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                btnText.style.display = 'inline-flex';
+                btnLoading.style.display = 'none';
+
+                resultDiv.style.display = 'block';
+                if (data.success) {
+                    resultDiv.className = 'email-result-success';
+                    resultDiv.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + data.message;
+                    document.getElementById('emailForm').style.display = 'none';
+                } else {
+                    resultDiv.className = 'email-result-error';
+                    resultDiv.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + data.message;
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btnText.style.display = 'inline-flex';
+                btnLoading.style.display = 'none';
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'email-result-error';
+                resultDiv.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Bir hata oluştu. Lütfen tekrar deneyin.';
+            });
+    }
 </script>
 
 <?php include 'includes/footer.php'; ?>

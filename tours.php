@@ -27,32 +27,46 @@ include 'includes/header.php'; ?>
             $search_term = isset($_GET['search']) ? trim($_GET['search']) : '';
 
             // Build Query
-            $query = "SELECT * FROM tours WHERE 1=1";
+            $query = "SELECT t.*, 
+                       nd.quota AS next_quota, 
+                       nd.start_date AS next_start, 
+                       nd.end_date AS next_end
+                FROM tours t
+                LEFT JOIN (
+                    SELECT td1.* FROM tour_dates td1
+                    INNER JOIN (
+                        SELECT tour_id, MIN(start_date) AS min_date
+                        FROM tour_dates
+                        WHERE start_date >= CURDATE()
+                        GROUP BY tour_id
+                    ) td2 ON td1.tour_id = td2.tour_id AND td1.start_date = td2.min_date
+                ) nd ON t.id = nd.tour_id
+                WHERE 1=1";
             $params = [];
 
             // Filter by Destination (Array)
             if (!empty($selected_destinations)) {
                 $placeholders = implode(',', array_fill(0, count($selected_destinations), '?'));
-                $query .= " AND location IN ($placeholders)";
+                $query .= " AND t.location IN ($placeholders)";
                 $params = array_merge($params, $selected_destinations);
             }
 
             // Filter by Price
             if ($min_price > 0 || $max_price < 10000) {
-                $query .= " AND price BETWEEN ? AND ?";
+                $query .= " AND t.price BETWEEN ? AND ?";
                 $params[] = $min_price;
                 $params[] = $max_price;
             }
 
             // Search Term
             if (!empty($search_term)) {
-                $query .= " AND (title LIKE ? OR description LIKE ? OR location LIKE ?)";
+                $query .= " AND (t.title LIKE ? OR t.description LIKE ? OR t.location LIKE ?)";
                 $params[] = "%$search_term%";
                 $params[] = "%$search_term%";
                 $params[] = "%$search_term%";
             }
 
-            $query .= " ORDER BY created_at DESC";
+            $query .= " ORDER BY t.created_at DESC";
 
             $stmt = $pdo->prepare($query);
             $stmt->execute($params);
@@ -108,7 +122,32 @@ include 'includes/header.php'; ?>
                 <div class="tours-grid"
                     style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
                     <?php if (count($tours) > 0): ?>
-                        <?php foreach ($tours as $tour): ?>
+                        <?php foreach ($tours as $tour):
+                            $remaining = $tour['next_quota'] ?? null;
+                            $nextStart = $tour['next_start'] ?? null;
+                            $nextEnd = $tour['next_end'] ?? null;
+
+                            $urgencyDate = '';
+                            if ($nextStart && $nextEnd) {
+                                $months = [
+                                    '01' => 'Oca',
+                                    '02' => 'Şub',
+                                    '03' => 'Mar',
+                                    '04' => 'Nis',
+                                    '05' => 'May',
+                                    '06' => 'Haz',
+                                    '07' => 'Tem',
+                                    '08' => 'Ağu',
+                                    '09' => 'Eyl',
+                                    '10' => 'Eki',
+                                    '11' => 'Kas',
+                                    '12' => 'Ara'
+                                ];
+                                $s = new DateTime($nextStart);
+                                $e = new DateTime($nextEnd);
+                                $urgencyDate = $s->format('d') . ' ' . $months[$s->format('m')] . ' - ' . $e->format('d') . ' ' . $months[$e->format('m')];
+                            }
+                            ?>
                             <a href="tour-detail.php?id=<?php echo $tour['id']; ?>"
                                 style="text-decoration: none; color: inherit; display: block;">
                                 <div class="tour-card"
@@ -138,6 +177,19 @@ include 'includes/header.php'; ?>
                                             style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 42px;">
                                             <?php echo htmlspecialchars($tour['description']); ?>
                                         </p>
+                                        <?php if ($remaining !== null && $remaining <= 5 && $remaining > 0): ?>
+                                            <div class="tour-urgency-badge">
+                                                <i class="fa-solid fa-fire-flame-curved"></i>
+                                                <span>
+                                                    <?php if (!empty($urgencyDate)): ?>
+                                                        <strong><?php echo $urgencyDate; ?></strong> tarihinde son
+                                                        <strong><?php echo $remaining; ?></strong> yer!
+                                                    <?php else: ?>
+                                                        Bu turda son <strong><?php echo $remaining; ?></strong> yer!
+                                                    <?php endif; ?>
+                                                </span>
+                                            </div>
+                                        <?php endif; ?>
                                         <div
                                             style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 1rem;">
                                             <span
