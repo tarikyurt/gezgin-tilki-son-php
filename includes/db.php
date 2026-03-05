@@ -1,8 +1,8 @@
 <?php
 $host = 'localhost';
-$dbname = 'gezgin_tilki';
-$username = 'root';
-$password = '';
+$dbname = 'gezg8837_test';
+$username = 'gezg8837_tarikyurt';
+$password = 'P8spkwYCQL';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);

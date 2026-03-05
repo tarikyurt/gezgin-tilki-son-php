@@ -4,6 +4,10 @@
  * POST: email, tour_id
  */
 header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-cache, no-store, must-revalidate');
+
+// PHP execution time limit - SMTP bağlantısı zaman aşımına uğramasın
+set_time_limit(60);
 
 // Prevent GET requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -322,12 +326,21 @@ try {
     $mail->SMTPSecure = SMTP_ENCRYPTION === 'ssl' ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = SMTP_PORT;
     $mail->CharSet = 'UTF-8';
+    $mail->Timeout = 10; // SMTP bağlantı zaman aşımı (saniye)
+    // Shared hosting SSL sertifika doğrulama sorunlarını aşmak için
+    $mail->SMTPOptions = [
+        'ssl' => [
+            'verify_peer'       => false,
+            'verify_peer_name'  => false,
+            'allow_self_signed' => true,
+        ]
+    ];
 
     // Recipients
     $mail->setFrom(SMTP_USERNAME, SMTP_FROM_NAME);
     $mail->addAddress($email);
     $mail->addReplyTo(SMTP_USERNAME, SMTP_FROM_NAME);
-    $mail->addBCC('tarikyurt12@gmail.com');
+    $mail->addBCC('operasyon@sthteam.com');
 
     // Embed CID images
     foreach ($cidImages as $img) {

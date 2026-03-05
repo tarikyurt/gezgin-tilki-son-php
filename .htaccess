@@ -1,0 +1,27 @@
+Options -Indexes
+
+RewriteEngine On
+
+# -------------------------------------------------------
+# 1. HTTP → HTTPS yönlendirme
+#    308 kullanılır: POST metodunu korur (301/302 korumaz)
+# -------------------------------------------------------
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=308]
+
+# -------------------------------------------------------
+# 2. PHP uzantısını URL'den gizle (api/ klasörü HARİÇ)
+#    Örnek: /tours.php → /tours (301)
+# -------------------------------------------------------
+
+# Adım 2a: Tarayıcıya gelen .php isteklerini uzantısız URL'ye yönlendir
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteCond %{THE_REQUEST} \s/+(.+?)\.php[\s?] [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# Adım 2b: Uzantısız istekleri sunucu tarafında ilgili .php dosyasına yönlendir
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+)$ $1.php [L]
