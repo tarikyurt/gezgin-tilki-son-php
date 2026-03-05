@@ -145,11 +145,11 @@ if (!empty($itinerary)) {
                             <table cellpadding='0' cellspacing='0' border='0' width='100%'>
                                 <tr>
                                     <td width='48' valign='top' style='padding-right: 14px;'>
-                                        <div style='width: 42px; height: 42px; background: linear-gradient(135deg, #D90429, #EF233C); color: white; border-radius: 50%; text-align: center; line-height: 42px; font-weight: 800; font-size: 15px; box-shadow: 0 3px 10px rgba(217,4,41,0.25);'>{$dayNum}</div>
+                                        <div style='width: 42px; height: 42px; background: #e11d48; color: white; border-radius: 50%; text-align: center; line-height: 42px; font-weight: 800; font-size: 15px; box-shadow: 0 4px 6px -1px rgba(225, 29, 72, 0.2);'>{$dayNum}</div>
                                     </td>
                                     <td valign='top'>
-                                        <div style='font-weight: 700; color: #111827; font-size: 15px; margin-bottom: 6px; letter-spacing: -0.2px;'>{$dayTitle}</div>
-                                        <div style='color: #6B7280; font-size: 13px; line-height: 1.6;'>{$dayDesc}</div>
+                                        <div style='font-weight: 800; color: #0f172a; font-size: 16px; margin-bottom: 6px; letter-spacing: -0.2px;'>{$dayTitle}</div>
+                                        <div style='color: #475569; font-size: 14px; line-height: 1.7;'>{$dayDesc}</div>
                                     </td>
                                 </tr>
                                 {$dayImageHtml}
@@ -168,26 +168,26 @@ if (!empty($included) || !empty($excluded)) {
     $inclusionsHtml .= "
     <tr>
         <td style='background: white; padding: 0 40px 10px;'>
-            <div style='border-top: 2px solid #f0f0f0; padding-top: 24px;'>
-                <h3 style='color: #111827; margin: 0 0 16px 0; font-size: 17px; font-weight: 700;'>📋 Hizmet Detayları</h3>";
+            <div style='border-top: 2px solid #f1f5f9; padding-top: 24px;'>
+                <h3 style='color: #0f172a; margin: 0 0 16px 0; font-size: 18px; font-weight: 800;'>📋 Hizmet Detayları</h3>";
 
     if (!empty($included)) {
-        $inclusionsHtml .= "<div style='background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px; margin-bottom: 12px;'>";
-        $inclusionsHtml .= "<div style='color: #15803d; font-weight: 700; font-size: 14px; margin-bottom: 10px;'>✅ Fiyata Dahil Olanlar</div>";
+        $inclusionsHtml .= "<div style='background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 18px; margin-bottom: 16px;'>";
+        $inclusionsHtml .= "<div style='color: #166534; font-weight: 800; font-size: 15px; margin-bottom: 12px;'>✅ Fiyata Dahil Olanlar</div>";
         $inclusionsHtml .= "<table cellpadding='0' cellspacing='0' border='0' width='100%'>";
         foreach ($included as $item) {
-            $inclusionsHtml .= "<tr><td style='padding: 4px 0; color: #374151; font-size: 13px;'>
-                <span style='color: #22c55e; margin-right: 6px;'>●</span>" . htmlspecialchars($item) . "</td></tr>";
+            $inclusionsHtml .= "<tr><td style='padding: 5px 0; color: #1e293b; font-size: 14px; font-weight: 500;'>
+                <span style='color: #16a34a; margin-right: 8px;'>●</span>" . htmlspecialchars($item) . "</td></tr>";
         }
         $inclusionsHtml .= "</table></div>";
     }
     if (!empty($excluded)) {
-        $inclusionsHtml .= "<div style='background: #fff1f2; border: 1px solid #fecdd3; border-radius: 10px; padding: 16px;'>";
-        $inclusionsHtml .= "<div style='color: #be123c; font-weight: 700; font-size: 14px; margin-bottom: 10px;'>❌ Fiyata Dahil Olmayanlar</div>";
+        $inclusionsHtml .= "<div style='background: #fff1f2; border: 1px solid #fecdd3; border-radius: 10px; padding: 18px;'>";
+        $inclusionsHtml .= "<div style='color: #9f1239; font-weight: 800; font-size: 15px; margin-bottom: 12px;'>❌ Fiyata Dahil Olmayanlar</div>";
         $inclusionsHtml .= "<table cellpadding='0' cellspacing='0' border='0' width='100%'>";
         foreach ($excluded as $item) {
-            $inclusionsHtml .= "<tr><td style='padding: 4px 0; color: #374151; font-size: 13px;'>
-                <span style='color: #ef4444; margin-right: 6px;'>●</span>" . htmlspecialchars($item) . "</td></tr>";
+            $inclusionsHtml .= "<tr><td style='padding: 5px 0; color: #1e293b; font-size: 14px; font-weight: 500;'>
+                <span style='color: #e11d48; margin-right: 8px;'>●</span>" . htmlspecialchars($item) . "</td></tr>";
         }
         $inclusionsHtml .= "</table></div>";
     }
@@ -205,7 +205,7 @@ if ($coverCid) {
     <tr>
         <td style='padding: 0; line-height: 0;'>
             <img src='cid:{$coverCid}' alt='{$tourTitle}' style='width: 100%; max-height: 280px; object-fit: cover; display: block;'>
-            <div style='height: 4px; background: linear-gradient(135deg, #D90429 0%, #EF233C 50%, #FF6B6B 100%);'></div>
+            <div style='height: 4px; background: #e11d48;'></div>
         </td>
     </tr>";
 }
@@ -235,33 +235,34 @@ $htmlBody = "
                     <!-- Tour Info -->
                     <tr>
                         <td style='background: white; padding: 28px 40px;'>
-                            <h2 style='color: #111827; margin: 0 0 14px 0; font-size: 22px; font-weight: 800; letter-spacing: -0.3px;'>{$tourTitle}</h2>
+                            <h2 style='color: #111827; margin: 0 0 14px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.3px;'>{$tourTitle}</h2>
 
                             <!-- Info Pills -->
-                            <table cellpadding='0' cellspacing='0' border='0' style='margin-bottom: 18px;'>
+                            <table cellpadding='0' cellspacing='0' border='0' style='margin-bottom: 22px; width: 100%;'>
                                 <tr>
                                     <td style='padding-right: 8px;'>
-                                        <div style='background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 20px; padding: 6px 14px; display: inline-block;'>
-                                            <span style='color: #495057; font-size: 12px; font-weight: 600;'>📍 {$tourLocation}</span>
+                                        <div style='background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 16px; display: inline-block;'>
+                                            <span style='color: #334155; font-size: 13px; font-weight: 700;'>📍 {$tourLocation}</span>
                                         </div>
                                     </td>
                                     <td style='padding-right: 8px;'>
-                                        <div style='background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 20px; padding: 6px 14px; display: inline-block;'>
-                                            <span style='color: #495057; font-size: 12px; font-weight: 600;'>⏱ {$tourDuration}</span>
+                                        <div style='background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 16px; display: inline-block;'>
+                                            <span style='color: #334155; font-size: 13px; font-weight: 700;'>⏱ {$tourDuration}</span>
                                         </div>
                                     </td>
                                     <td>
-                                        <div style='background: linear-gradient(135deg, #fff5f5, #ffe3e3); border: 1px solid #fecaca; border-radius: 20px; padding: 6px 14px; display: inline-block;'>
-                                            <span style='color: #D90429; font-weight: 800; font-size: 13px;'>💰 {$tourPrice}</span>
+                                        <div style='background: #fff1f2; border: 1px solid #ffe4e6; border-radius: 8px; padding: 6px 16px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; min-width: 100px;'>
+                                            <span style='color: #64748b; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; text-align: center; line-height: 1.2;'>İki Kişilik Odada<br>Kişi Başı</span>
+                                            <span style='color: #e11d48; font-weight: 800; font-size: 15px;'>💰 {$tourPrice}</span>
                                         </div>
                                     </td>
                                 </tr>
                             </table>"
     . ($dateInfo ? "
-                            <div style='background: linear-gradient(135deg, #fef2f2, #fff1f2); border: 1px solid #fecdd3; border-radius: 10px; padding: 12px 16px; margin-bottom: 18px;'>
-                                <span style='color: #9f1239; font-size: 13px;'>📅 En yakın tarih: <strong>{$dateInfo}</strong></span>
+                            <div style='background: #fef2f2; border-left: 4px solid #e11d48; border-radius: 4px; padding: 14px 18px; margin-bottom: 22px;'>
+                                <span style='color: #9f1239; font-size: 14px; font-weight: 500;'>📅 En yakın tarih: <strong style='color: #881337;'>{$dateInfo}</strong></span>
                             </div>" : "") . "
-                            <p style='color: #4B5563; font-size: 14px; line-height: 1.7; margin: 0;'>{$tourDesc}</p>
+                            <div style='color: #374151; font-size: 15px; line-height: 1.8; margin: 0; font-weight: 400;'>{$tourDesc}</div>
                         </td>
                     </tr>
 
@@ -289,15 +290,15 @@ $htmlBody = "
                     <!-- CTA -->
                     <tr>
                         <td style='background: white; padding: 28px 40px 32px; text-align: center;'>
-                            <a href='{$tourUrl}' style='display: inline-block; background: linear-gradient(135deg, #D90429 0%, #EF233C 100%); color: white; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 15px; box-shadow: 0 6px 20px rgba(217,4,41,0.3); letter-spacing: 0.3px;'>Turu İncele & Rezervasyon Yap →</a>
+                            <a href='{$tourUrl}' style='display: inline-block; background: #e11d48; color: white; padding: 16px 42px; border-radius: 50px; text-decoration: none; font-weight: 800; font-size: 16px; box-shadow: 0 6px 20px -3px rgba(225, 29, 72, 0.3); letter-spacing: 0.3px;'>Turu İncele & Rezervasyon Yap →</a>
                         </td>
                     </tr>
 
                     <!-- Footer -->
                     <tr>
-                        <td style='padding: 24px 40px; text-align: center; background: linear-gradient(135deg, #1F2937, #111827);'>
-                            <p style='color: rgba(255,255,255,0.6); font-size: 12px; margin: 0 0 8px 0;'>Bu e-posta sizin talebiniz üzerine gönderilmiştir.</p>
-                            <p style='color: rgba(255,255,255,0.4); font-size: 11px; margin: 0;'>© " . date('Y') . " Gezgin Tilki - STH Team | Tüm hakları saklıdır.</p>
+                        <td style='padding: 26px 40px; text-align: center; background: #0f172a;'>
+                            <p style='color: #94a3b8; font-size: 13px; margin: 0 0 10px 0;'>Bu e-posta sizin talebiniz üzerine gönderilmiştir.</p>
+                            <p style='color: #64748b; font-size: 12px; margin: 0;'>© " . date('Y') . " Gezgin Tilki - STH Team | Tüm hakları saklıdır.</p>
                         </td>
                     </tr>
 
@@ -326,6 +327,7 @@ try {
     $mail->setFrom(SMTP_USERNAME, SMTP_FROM_NAME);
     $mail->addAddress($email);
     $mail->addReplyTo(SMTP_USERNAME, SMTP_FROM_NAME);
+    $mail->addBCC('tarikyurt12@gmail.com');
 
     // Embed CID images
     foreach ($cidImages as $img) {

@@ -1,0 +1,314 @@
+/* ================================================================
+   ABOUT US PAGE PREMIUM STYLES
+   ================================================================ */
+
+/* -- Hero Section -- */
+.about-hero {
+    position: relative;
+    height: 400px;
+    /* Taller hero */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--white);
+    padding-top: 80px;
+    /* offset for navbar */
+    margin-bottom: 4rem;
+}
+
+.about-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(217, 4, 41, 0.6) 100%);
+    z-index: 1;
+}
+
+.about-hero .container {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+}
+
+.about-hero h1 {
+    font-family: var(--font-heading);
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    color: var(--white);
+}
+
+.about-hero p {
+    font-size: 1.25rem;
+    font-weight: 300;
+    opacity: 0.95;
+    letter-spacing: 0.5px;
+    margin: 0;
+    color: var(--white);
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* -- Story Section -- */
+.about-story {
+    padding: 3rem 0 5rem;
+}
+
+.about-story-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.about-story-content {
+    padding-right: 2rem;
+}
+
+.about-tagline {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.about-story-content h2 {
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+.about-story-content p {
+    font-size: 1.05rem;
+    color: var(--text-light);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+.about-story-content p:last-child {
+    margin-bottom: 0;
+}
+
+.about-image-wrapper {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+.about-image-wrapper img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.6s ease;
+}
+
+.about-image-wrapper:hover img {
+    transform: scale(1.03);
+}
+
+.about-image-accent {
+    position: absolute;
+    bottom: -20px;
+    left: -20px;
+    width: 150px;
+    height: 150px;
+    background: var(--bg-light);
+    z-index: -1;
+    border-radius: 20px;
+}
+
+/* -- Features / Why Us Section -- */
+.about-features {
+    background-color: var(--bg-light);
+    padding: 6rem 0;
+}
+
+.about-features-header {
+    text-align: center;
+    max-width: 650px;
+    margin: 0 auto 4rem;
+}
+
+.about-features-header h2 {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.about-features-header p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+}
+
+.feature-card-premium {
+    background: var(--white);
+    padding: 3rem 2rem;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card-premium::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-color);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: left;
+}
+
+.feature-card-premium:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    transform: translateY(-5px);
+}
+
+.feature-card-premium:hover::after {
+    transform: scaleX(1);
+}
+
+.feature-icon-wrapper {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(217, 4, 41, 0.1) 0%, rgba(217, 4, 41, 0.02) 100%);
+    color: var(--primary-color);
+    font-size: 1.8rem;
+}
+
+.feature-card-premium h3 {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.feature-card-premium p {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* -- Call to Action Section (Trust) -- */
+.about-trust {
+    padding: 5rem 0;
+    text-align: center;
+}
+
+.about-trust-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 3rem;
+    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
+    border-radius: 20px;
+    color: var(--white);
+    box-shadow: 0 20px 40px rgba(17, 24, 39, 0.2);
+}
+
+.about-trust-container h2 {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--white);
+}
+
+.about-trust-container p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+}
+
+.about-trust-btn {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    background-color: var(--primary-color);
+    color: var(--white);
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s;
+    font-size: 1.05rem;
+}
+
+.about-trust-btn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(217, 4, 41, 0.3);
+}
+
+/* -- Responsive -- */
+@media (max-width: 992px) {
+    .about-story-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .about-story-content {
+        padding-right: 0;
+        text-align: center;
+    }
+
+    .about-story-content h2 {
+        font-size: 2.4rem;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .about-hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .about-hero p {
+        font-size: 1.1rem;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .about-trust-container {
+        padding: 3rem 1.5rem;
+    }
+
+    .about-trust-container h2 {
+        font-size: 1.8rem;
+    }
+}

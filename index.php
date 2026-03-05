@@ -186,7 +186,7 @@ $stmt = $pdo->query("
             GROUP BY tour_id
         ) td2 ON td1.tour_id = td2.tour_id AND td1.start_date = td2.min_date
     ) nd ON t.id = nd.tour_id
-    WHERE t.is_featured = 1
+    WHERE t.is_featured = 1 AND t.is_active = 1
     ORDER BY t.created_at DESC
     LIMIT 6
 ");
@@ -316,58 +316,85 @@ $featured_tours = $stmt->fetchAll();
 </section>
 
 <script>
-    // Search Autocomplete Logic
+    // Ülke listesini tutacak değişken
+    let countries = [];
+
+    // Sayfa yüklendiğinde JSON dosyasını çek
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('assets/data/countries.json')
+            .then(response => response.json())
+            .then(data => {
+                countries = data;
+            })
+            .catch(err => console.error('Ülke listesi yüklenemedi:', err));
+    });
+
+    // Arama Otomatik Tamamlama Mantığı
     const searchInput = document.getElementById('search-destination');
     const searchResults = document.getElementById('search-results');
 
-    let debounceTimer;
-
     searchInput.addEventListener('input', function () {
-        clearTimeout(debounceTimer);
-        const query = this.value.trim();
+        const query = this.value.toLocaleLowerCase('tr-TR').trim();
+        searchResults.innerHTML = ''; // Önceki sonuçları temizle
 
-        if (query.length < 1) { searchResults.style.display = 'none'; return; } debounceTimer = setTimeout(() => {
-            fetch(`api/search-destinations.php?q=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        searchResults.innerHTML = '';
-                        data.forEach(tour => {
-                            const div = document.createElement('div');
-                            div.className = 'search-result-item';
-                            div.innerHTML = `
-                                <div>
-                                    <h4>${tour.title}</h4>
-                                    <p><i class="fa-solid fa-location-dot"></i> ${tour.location}</p>
-                                </div>
-                            `; div.onclick = () => {
-                                window.location.href = `tour-detail.php?id=${tour.id}`;
-                            };
-                            searchResults.appendChild(div);
-                        });
-                        searchResults.style.display = 'block';
-                    } else {
-                        searchResults.style.display = 'none';
-                    }
-                })
-                .catch(err => console.error('Error fetching suggestions:', err));
-        }, 300);
+        if (query.length < 1) {
+            searchResults.style.display = 'none';
+            return;
+        }
+
+        // Ülke listesini filtrele (Türkçe karakter duyarlı)
+        const filteredCountries = countries.filter(country =>
+            country.toLocaleLowerCase('tr-TR').includes(query)
+        );
+
+        if (filteredCountries.length > 0) {
+            filteredCountries.slice(0, 10).forEach(country => { // Maksimum 10 öneri göster
+                const div = document.createElement('div');
+                div.className = 'search-result-item';
+                // Görünüm düzeni
+                div.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <i class="fa-solid fa-earth-europe" style="color:var(--primary-color);"></i>
+                        <span style="font-weight:500;">${country}</span>
+                    </div>
+                `;
+
+                // Tıklanınca inputa yaz ve listeyi kapat
+                div.onclick = () => {
+                    searchInput.value = country;
+                    searchResults.style.display = 'none';
+                };
+
+                searchResults.appendChild(div);
+            });
+            searchResults.style.display = 'block';
+        } else {
+            searchResults.style.display = 'none';
+        }
     });
 
-    // Close dropdown when clicking outside
+    // Dışarı tıklandığında listeyi kapat
     document.addEventListener('click', function (e) {
         if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
             searchResults.style.display = 'none';
         }
     });
 
-    // Perform Search on Button Click
+    // Ara Butonuna Tıklama (Tours sayfasına yönlendirme)
     function performSearch() {
         const query = searchInput.value.trim();
         if (query) {
+            // tours.php zaten "search" parametresi ile başlık, açıklama ve lokasyon araması yapıyor.
             window.location.href = `tours.php?search=${encodeURIComponent(query)}`;
         }
     }
+
+    // Enter tuşuna basınca da arama yapması için
+    searchInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
 </script>
 
 <?php include 'includes/footer.php'; ?>

@@ -97,6 +97,7 @@ if ($is_ajax) {
                         <th>Resim</th>
                         <th>Başlık</th>
                         <th>Fiyat</th>
+                        <th>Durum</th>
                         <th>Süre</th>
                         <th>İşlemler</th>
                     </tr>

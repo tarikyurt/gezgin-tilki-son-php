@@ -41,7 +41,7 @@ include 'includes/header.php'; ?>
                         GROUP BY tour_id
                     ) td2 ON td1.tour_id = td2.tour_id AND td1.start_date = td2.min_date
                 ) nd ON t.id = nd.tour_id
-                WHERE 1=1";
+                WHERE t.is_active = 1";
             $params = [];
 
             // Filter by Destination (Array)
@@ -204,12 +204,47 @@ include 'includes/header.php'; ?>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <div
-                            style="width: 100%; text-align: center; padding: 3rem; background: white; border-radius: 10px; grid-column: 1 / -1;">
-                            <i class="fa-solid fa-plane-slash"
-                                style="font-size: 3rem; color: #ddd; margin-bottom: 1rem;"></i>
-                            <h3>Kriterlerinize uygun tur bulunamadı.</h3>
-                            <p>Lütfen filtreleri değiştirip tekrar deneyin.</p>
-                            <a href="tours.php" class="btn-primary" style="margin-top: 1rem;">Filtreleri Temizle</a>
+                            style="width: 100%; text-align: center; padding: 3rem; background: white; border-radius: 10px; grid-column: 1 / -1; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+
+                            <?php if (!empty($search_term)): ?>
+                                <i class="fa-solid fa-magnifying-glass-location"
+                                    style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem; opacity: 0.7;"></i>
+                                <h3 style="margin-bottom: 0.5rem; color: #333;">Aradığınız
+                                    "<?php echo htmlspecialchars($search_term); ?>" turunu burada bulamadık.</h3>
+                                <p style="color: #666; margin-bottom: 2rem;">Ama üzülmeyin! Ana tur platformumuzda bu
+                                    destinasyon için harika seçenekler sizi bekliyor olabilir.</p>
+
+                                <div
+                                    style="background: #f8f9fa; border: 2px dashed #e9ecef; border-radius: 12px; padding: 2rem; max-width: 550px; margin: 0 auto; transition: all 0.3s hover:border-color: var(--primary-color);">
+                                    <h4 style="color: var(--secondary-color); margin-bottom: 0.5rem; font-size: 1.1rem;">
+                                        <i class="fa-solid fa-globe"></i> Gezgin Tilki Global'de Keşfedin
+                                    </h4>
+                                    <p style="font-size: 0.95rem; margin-bottom: 1.5rem; color: #555;">
+                                        Diğer web sitemizde <strong><?php echo htmlspecialchars($search_term); ?></strong> ile
+                                        ilgili tüm turları inceleyebilirsiniz.
+                                    </p>
+
+                                    <a href="https://tur.gezgintilki.com/turlar?s=<?php echo urlencode($search_term); ?>"
+                                        target="_blank" class="btn-primary"
+                                        style="display: inline-flex; align-items: center; gap: 0.8rem; text-decoration: none; padding: 0.8rem 2rem; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                                        <span>tur.gezgintilki.com'da Ara</span>
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    </a>
+                                </div>
+
+                                <div style="margin-top: 2rem;">
+                                    <a href="tours.php" style="color: #999; text-decoration: underline; font-size: 0.9rem;">Veya
+                                        tüm filtreleri temizle</a>
+                                </div>
+
+                            <?php else: ?>
+                                <i class="fa-solid fa-plane-slash"
+                                    style="font-size: 3rem; color: #ddd; margin-bottom: 1rem;"></i>
+                                <h3>Kriterlerinize uygun tur bulunamadı.</h3>
+                                <p>Lütfen filtreleri değiştirip tekrar deneyin.</p>
+                                <a href="tours.php" class="btn-primary" style="margin-top: 1rem;">Filtreleri Temizle</a>
+                            <?php endif; ?>
+
                         </div>
                     <?php endif; ?>
                 </div>

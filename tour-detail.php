@@ -414,7 +414,7 @@ include 'includes/header.php';
                                 <td>
                                     <?php if ($remaining > 0): ?>
                                         <button class="btn-primary"
-                                            onclick="alert('Rezervasyon formu açılacak... ID: <?php echo $date['id']; ?>')"
+                                            onclick="window.location.href='reservation.php?tour_id=<?php echo $tour['id']; ?>&date_id=<?php echo $date['id']; ?>'"
                                             style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Seç</button>
                                     <?php else: ?>
                                         <button class="btn-primary" disabled

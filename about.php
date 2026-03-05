@@ -1,65 +1,101 @@
 <?php $has_hero = true;
 include 'includes/header.php'; ?>
 
-<section class="page-header"
-    style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover; height: 300px; display: flex; align-items: center; justify-content: center; color: white; padding-top: 80px;">
-    <div class="container text-center">
-        <h1>Hakkımızda</h1>
-        <p>Gezgin Tilki'nin hikayesi ve değerleri</p>
+<!-- Custom Styles for About Page -->
+<link rel="stylesheet" href="assets/css/about.css">
+
+<!-- Premium Hero -->
+<section class="about-hero"
+    style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');">
+    <div class="container">
+        <h1>Dünyayı Farklı Bir Gözle Keşfedin</h1>
+        <p>Gezgin Tilki ile sadece bir tatil değil, ilham veren bir deneyim yaşayın.</p>
     </div>
 </section>
 
-<section class="about-content">
+<!-- Our Story / About Us -->
+<section class="about-story">
     <div class="container">
-        <div class="row" style="display: flex; gap: 4rem; align-items: center; flex-wrap: wrap;">
-            <div class="col-text" style="flex: 1; min-width: 300px;">
-                <h2 style="margin-bottom: 1.5rem;">Biz Kimiz?</h2>
-                <p style="margin-bottom: 1rem; color: var(--text-light);">Gezgin Tilki, seyahat tutkusunu profesyonel
-                    bir hizmet anlayışıyla birleştiren, yenilikçi ve dinamik bir turizm acentesidir. 2026 yılında
-                    kurulan firmamız, misafirlerine sadece bir tatil değil, unutulmaz deneyimler sunmayı
-                    hedeflemektedir.</p>
-                <p style="margin-bottom: 1rem; color: var(--text-light);">Dünyanın en gizli kalmış köşelerinden en
-                    popüler destinasyonlarına kadar geniş bir yelpazede turlar düzenliyoruz. Her bütçeye ve zevke uygun
-                    seçeneklerimizle, hayalinizdeki tatili gerçeğe dönüştürmek için çalışıyoruz.</p>
+        <div class="about-story-grid">
+            <div class="about-story-content">
+                <span class="about-tagline">Hakkımızda</span>
+                <h2>Sıradan Turların Ötesinde, Sizin İçin Tasarlandı.</h2>
 
-                <h3 style="margin: 2rem 0 1rem;">Misyonumuz</h3>
-                <p style="color: var(--text-light);">Misafirlerimize güvenilir, konforlu ve keyifli seyahat deneyimleri
-                    sunarak, Türkiye'nin önde gelen turizm markalarından biri olmak.</p>
+                <p>Gezgin Tilki, tutkulu seyahatseverler için standartların ötesine geçen, yenilikçi ve konfor odaklı
+                    bir turizm markasıdır. Amacımız, misafirlerimize dünyayı gezdirirken onlara sadece yeni yerler
+                    göstermek değil; gittikleri coğrafyanın dokusunu hissedecekleri, unutulmaz anılar biriktirecekleri
+                    <strong>premium</strong> bir tecrübe yaşatmaktır.
+                </p>
+
+                <p>Seyahat planlamasının her ince detayına özen gösteriyoruz. Deneyimli rehberlerimiz, lüks ve konforlu
+                    ulaşım seçeneklerimiz, özenle seçilmiş konaklama tesislerimiz ve size özel hazırlanmış rotalarımızla
+                    hayalinizdeki tatili kusursuz bir şekilde gerçeğe dönüştürmek için çalışıyoruz. Çünkü biliyoruz ki
+                    seyahat etmek, dünyaya ve kendinize yaptığınız en değerli yatırımdır.</p>
+
+                <p><strong>Misyonumuz:</strong> Misafirlerimize güvenilir, konforlu ve eşsiz seyahat deneyimleri
+                    sunarak, Türkiye'nin kalite odaklı ve en çok tercih edilen turizm markası olmak.</p>
             </div>
-            <div class="col-img" style="flex: 1; min-width: 300px;">
-                <img src="https://images.unsplash.com/photo-1504812753440-29faab99648a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                    alt="Team" style="border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+
+            <div class="about-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1530789253388-582c481c54b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    alt="Gezgin Tilki Seyahat Deneyimi">
+                <div class="about-image-accent"></div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="team" style="background-color: var(--bg-light);">
+<!-- Why Choose Us -->
+<section class="about-features">
     <div class="container">
-        <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
-            <h2>Ekibimiz</h2>
-            <p>Sizler için çalışan profesyonel kadromuz</p>
+        <div class="about-features-header">
+            <h2>Neden Gezgin Tilki?</h2>
+            <p>Seyahatinizi planlarken hiçbir detayı şansa bırakmıyoruz. Ayrıcalıklı bir deneyim için bizi tercih
+                etmenizdeki temel nedenler.</p>
         </div>
-        <div class="team-grid"
-            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; text-align: center;">
-            <div class="team-member">
-                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Member"
-                    style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 5px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
-                <h4>Ahmet Yılmaz</h4>
-                <p style="color: var(--text-light); font-size: 0.9rem;">Kurucu & CEO</p>
+
+        <div class="features-grid">
+            <!-- Feature 1 -->
+            <div class="feature-card-premium">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <h3>Premium Konfor</h3>
+                <p>Turlarımızda uçuşlardan otellere kadar tüm süreç, konforunuz ve lüksünüz ön planda tutularak büyük
+                    bir titizlikle planlanır.</p>
             </div>
-            <div class="team-member">
-                <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Member"
-                    style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 5px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
-                <h4>Zeynep Kaya</h4>
-                <p style="color: var(--text-light); font-size: 0.9rem;">Operasyon Müdürü</p>
+
+            <!-- Feature 2 -->
+            <div class="feature-card-premium">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                </div>
+                <h3>Uzman Rehberlik</h3>
+                <p>Gittiğimiz her bölgenin tarihini ve kültürünü sadece anlatmakla kalmayan, yaşatan profesyonel
+                    kokartlı rehberler ile çalışıyoruz.</p>
             </div>
-            <div class="team-member">
-                <img src="https://randomuser.me/api/portraits/men/85.jpg" alt="Member"
-                    style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 5px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
-                <h4>Mehmet Demir</h4>
-                <p style="color: var(--text-light); font-size: 0.9rem;">Baş Rehber</p>
+
+            <!-- Feature 3 -->
+            <div class="feature-card-premium">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3>Güven ve Şeffaflık</h3>
+                <p>Gizli ücretler, son dakika sürprizleri yoktur. Tur programında ne vadediyorsak onu kusursuz bir
+                    şekilde yerine getirme güvencesi sunuyoruz.</p>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- Trust / Call to Action -->
+<section class="about-trust">
+    <div class="container">
+        <div class="about-trust-container">
+            <h2>Bizimle Seyahat Etmenin Ayrıcalığını Yaşayın</h2>
+            <p>Hayalinizdeki seyahati gerçeğe dönüştürmek için profesyonel ekibimiz bir telefon uzağınızda. Unutulmaz
+                anılar için ilk adımı atın; valizinizi hazırlayın, gerisini bize bırakın.</p>
+            <a href="tours.php" class="about-trust-btn">Turlarımızı Keşfedin</a>
         </div>
     </div>
 </section>

@@ -181,11 +181,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <form method="POST" enctype="multipart/form-data" id="tourForm">
                 <!-- Tabs Navigation -->
                 <div class="tabs">
-                    <button type="button" class="tab-btn active" onclick="openTab('general')">Genel Bilgiler</button>
-                    <button type="button" class="tab-btn" onclick="openTab('itinerary')">Tur Programı</button>
-                    <button type="button" class="tab-btn" onclick="openTab('inclusions')">Hizmetler</button>
-                    <button type="button" class="tab-btn" onclick="openTab('features')">Öne Çıkanlar</button>
-                    <button type="button" class="tab-btn" onclick="openTab('dates')">Tarih & Fiyat</button>
+                    <button type="button" class="tab-btn active" onclick="openTab('general', event)">Genel
+                        Bilgiler</button>
+                    <button type="button" class="tab-btn" onclick="openTab('itinerary', event)">Tur Programı</button>
+                    <button type="button" class="tab-btn" onclick="openTab('inclusions', event)">Hizmetler</button>
+                    <button type="button" class="tab-btn" onclick="openTab('features', event)">Öne Çıkanlar</button>
+                    <button type="button" class="tab-btn" onclick="openTab('dates', event)">Tarih & Fiyat</button>
                 </div>
 
                 <div class="form-card">
@@ -267,37 +268,61 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <!-- 2. ITINERARY TAB -->
                     <div id="itinerary" class="tab-content">
+                        <div style="margin-bottom: 1.5rem;">
+                            <h3 style="margin: 0 0 0.25rem 0; font-size: 1.1rem; color: #1a1a2e;">Gün Gün Tur Programı
+                            </h3>
+                            <p style="margin: 0; font-size: 0.85rem; color: #888;">Her gün için başlık, açıklama ve
+                                opsiyonel görsel ekleyin. Sıralama otomatik numaralandırılır.</p>
+                        </div>
                         <div id="itinerary-container">
-                            <div class="dynamic-row" style="flex-wrap: wrap;">
-                                <div style="width: 50px; font-weight: bold; padding-top: 0.5rem; text-align: center;">1.
-                                    Gün</div>
-                                <div style="flex: 1; min-width: 250px;">
-                                    <input type="text" name="itinerary_title[]"
-                                        placeholder="Gün Başlığı (Örn: İstanbul'a Varış)" required
-                                        style="margin-bottom: 0.5rem;">
-                                    <!-- Quill Editor Container -->
-                                    <div class="quill-editor" style="height: 120px;"></div>
-                                    <textarea name="itinerary_desc[]" style="display:none;"></textarea>
+                            <div class="itinerary-card">
+                                <div class="itinerary-card-badge">
+                                    <span class="day-num">1</span>
+                                    <span class="day-label">GÜN</span>
                                 </div>
-                                <div style="width: 220px;">
-                                    <label
-                                        style="font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin-bottom: 0.25rem;"><i
-                                            class="fa-solid fa-image"
-                                            style="margin-right: 0.3rem; color: var(--primary-color);"></i> Gün
-                                        Görseli</label>
-                                    <input type="file" name="itinerary_image[]" accept="image/*"
-                                        style="font-size: 0.8rem; margin-bottom: 0.5rem;"
-                                        onchange="previewItineraryImage(this)">
-                                    <img class="itin-img-preview" src="" alt=""
-                                        style="display:none; width:100%; max-height:120px; object-fit:cover; border-radius:6px; margin-bottom:0.5rem;">
-                                    <input type="text" name="itinerary_alt[]" placeholder="Görsel alt etiketi (SEO)"
-                                        style="font-size: 0.85rem;">
+                                <div class="itinerary-card-body">
+                                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                                        <label
+                                            style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;"><i
+                                                class="fa-solid fa-heading"
+                                                style="margin-right: 0.3rem; color: var(--primary-color);"></i> Gün
+                                            Başlığı</label>
+                                        <input type="text" name="itinerary_title[]"
+                                            placeholder="Örn: İstanbul Havalimanı Buluşma ve Hareket" required>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                                        <label
+                                            style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;"><i
+                                                class="fa-solid fa-align-left"
+                                                style="margin-right: 0.3rem; color: var(--primary-color);"></i>
+                                            Açıklama</label>
+                                        <!-- Quill Editor Container -->
+                                        <div class="quill-editor" style="height: 120px;"></div>
+                                        <textarea name="itinerary_desc[]" style="display:none;"></textarea>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label
+                                            style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;"><i
+                                                class="fa-solid fa-image"
+                                                style="margin-right: 0.3rem; color: var(--primary-color);"></i> Gün
+                                            Görseli</label>
+                                        <img class="itin-img-preview" src="" alt=""
+                                            style="display:none; width:100%; max-height:150px; object-fit:cover; border-radius:8px; margin-bottom:0.5rem;">
+                                        <input type="file" name="itinerary_image[]" accept="image/*"
+                                            style="font-size: 0.8rem; margin-bottom: 0.5rem;"
+                                            onchange="previewItineraryImage(this)">
+                                        <input type="text" name="itinerary_alt[]" placeholder="Görsel alt etiketi (SEO)"
+                                            style="font-size: 0.85rem;">
+                                    </div>
                                 </div>
-                                <button type="button" class="btn-remove"
-                                    onclick="this.parentElement.remove()">Sil</button>
+                                <button type="button" class="itinerary-card-delete" title="Bu günü sil"
+                                    onclick="removeItineraryCard(this)"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
                         </div>
-                        <button type="button" class="btn-add" onclick="addItineraryRow()">+ Yeni Gün Ekle</button>
+                        <button type="button" class="btn-add" onclick="addItineraryRow()"
+                            style="width: 100%; padding: 0.85rem; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 2px dashed #ccc; background: #fafafa; color: #666; border-radius: 10px; cursor: pointer; transition: all 0.3s;">
+                            <i class="fa-solid fa-plus"></i> Yeni Gün Ekle
+                        </button>
                     </div>
 
                     <!-- 3. INCLUSIONS TAB -->
@@ -337,45 +362,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <!-- 4. KEY FEATURES TAB -->
                     <div id="features" class="tab-content">
-                        <h3>Öne Çıkan Özellikler</h3>
-                        <p style="margin-bottom: 1rem; color: #666;">Tur detay sayfasında görünecek 4 temel özelliği
-                            buraya ekleyin (Uçuş, Otel, vb).</p>
+                        <div style="margin-bottom: 1.5rem;">
+                            <h3 style="margin: 0 0 0.25rem 0; font-size: 1.1rem; color: #1a1a2e;">Öne Çıkan Özellikler</h3>
+                            <p style="margin: 0; font-size: 0.85rem; color: #888;">Tur detay sayfasında görünecek 4 temel özelliği buraya ekleyin (Uçuş, Otel, vb).</p>
+                        </div>
                         <div id="features-container">
                             <!-- Features will be added here -->
                         </div>
-                        <button type="button" class="btn-add" onclick="addFeatureRow()">+ Özellik Ekle</button>
+                        <button type="button" class="btn-add" onclick="addFeatureRow()" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 2px dashed #ccc; background: #fafafa; color: #666; border-radius: 10px; cursor: pointer; transition: all 0.3s;">
+                            <i class="fa-solid fa-plus"></i> Yeni Özellik Ekle
+                        </button>
                     </div>
 
                     <!-- 5. DATES TAB -->
                     <div id="dates" class="tab-content">
+                        <div style="margin-bottom: 1.5rem;">
+                            <h3 style="margin: 0 0 0.25rem 0; font-size: 1.1rem; color: #1a1a2e;">Tarih & Fiyat Seçenekleri</h3>
+                            <p style="margin: 0; font-size: 0.85rem; color: #888;">Bu tur için geçerli tarih aralıklarını, fiyatları ve kontenjan bilgilerini girin.</p>
+                        </div>
                         <div id="dates-container">
-                            <div class="dynamic-row">
-                                <div>
-                                    <label style="font-size: 0.8rem;">Başlangıç</label>
-                                    <input type="date" name="date_start[]">
+                            <div class="date-card">
+                                <div class="date-card-content">
+                                    <div class="date-badge">
+                                        <i class="fa-regular fa-calendar-days"></i>
+                                    </div>
+                                    <div class="date-form-grid">
+                                        <div>
+                                            <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Gidiş Tarihi</label>
+                                            <input type="date" name="date_start[]" style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
+                                        </div>
+                                        <div>
+                                            <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Dönüş Tarihi</label>
+                                            <input type="date" name="date_end[]" style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
+                                        </div>
+                                        <div>
+                                            <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Özel Fiyat (€)</label>
+                                            <input type="number" name="date_price[]" value="0" step="0.01" style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
+                                        </div>
+                                        <div>
+                                            <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Kontenjan</label>
+                                            <input type="number" name="date_quota[]" value="20" style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label style="font-size: 0.8rem;">Bitiş</label>
-                                    <input type="date" name="date_end[]">
-                                </div>
-                                <div>
-                                    <label style="font-size: 0.8rem;">Özel Fiyat (€)</label>
-                                    <input type="number" name="date_price[]" value="0" step="0.01">
-                                </div>
-                                <div>
-                                    <label style="font-size: 0.8rem;">Kontenjan</label>
-                                    <input type="number" name="date_quota[]" value="20" style="width: 80px;">
-                                </div>
-                                <button type="button" class="btn-remove" style="margin-top: 1.5rem;"
-                                    onclick="this.parentElement.remove()">Sil</button>
+                                <button type="button" class="date-card-delete" title="Tarihi sil" onclick="removeDateCard(this)"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
                         </div>
-                        <button type="button" class="btn-add" onclick="addDateRow()">+ Yeni Tarih Ekle</button>
+                        <button type="button" class="btn-add" onclick="addDateRow()" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 2px dashed #ccc; background: #fafafa; color: #666; border-radius: 10px; cursor: pointer; transition: all 0.3s;">
+                            <i class="fa-solid fa-plus"></i> Yeni Tarih Ekle
+                        </button>
                     </div>
 
                     <div style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 2rem; text-align: right;">
-                        <button type="submit" class="btn-primary" style="padding: 1rem 3rem; font-size: 1.1rem;">Turu
-                            Oluştur</button>
+                        <button type="button" id="tourAddContinueBtn" class="btn-primary"
+                            style="padding: 1rem 3rem; font-size: 1.1rem; background: #667eea;"
+                            onclick="nextTab()">Devam Et <i class="fa-solid fa-arrow-right"
+                                style="margin-left:8px;"></i></button>
+                        <button type="submit" id="tourAddSaveBtn" class="btn-primary"
+                            style="padding: 1rem 3rem; font-size: 1.1rem; display: none;"><i class="fa-solid fa-check"
+                                style="margin-right:8px;"></i> Turu Kaydet</button>
                     </div>
                 </div>
             </form>
@@ -383,36 +428,77 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script>
-        function openTab(tabId) {
+        const tourAddTabs = ['general', 'itinerary', 'inclusions', 'features', 'dates'];
+        let tourAddCurrentIdx = 0;
+
+        function openTab(tabId, evt) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
+
+            // Activate the correct tab button
+            if (evt && evt.target) {
+                evt.target.classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    if (btn.getAttribute('onclick').indexOf(tabId) !== -1) btn.classList.add('active');
+                });
+            }
+
+            // Update button visibility
+            tourAddCurrentIdx = tourAddTabs.indexOf(tabId);
+            var contBtn = document.getElementById('tourAddContinueBtn');
+            var saveBtn = document.getElementById('tourAddSaveBtn');
+            if (tourAddCurrentIdx === tourAddTabs.length - 1) {
+                contBtn.style.display = 'none';
+                saveBtn.style.display = 'inline-block';
+            } else {
+                contBtn.style.display = 'inline-block';
+                saveBtn.style.display = 'none';
+            }
+        }
+
+        function nextTab() {
+            if (tourAddCurrentIdx < tourAddTabs.length - 1) {
+                openTab(tourAddTabs[tourAddCurrentIdx + 1]);
+                document.querySelector('.tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         function addItineraryRow() {
             const container = document.getElementById('itinerary-container');
-            const dayCount = container.children.length + 1;
+            const dayNum = container.querySelectorAll('.itinerary-card').length + 1;
             const div = document.createElement('div');
-            div.className = 'dynamic-row';
-            div.style.flexWrap = 'wrap';
+            div.className = 'itinerary-card';
+            div.style.animation = 'fadeInUp 0.3s ease';
             div.innerHTML = `
-        <div style="width: 50px; font-weight: bold; padding-top: 0.5rem; text-align: center;">${dayCount}. Gün</div>
-        <div style="flex: 1; min-width: 250px;">
-            <input type="text" name="itinerary_title[]" placeholder="Gün Başlığı" required style="margin-bottom: 0.5rem;">
-            <!-- Quill Editor Container -->
-            <div class="quill-editor" style="height: 120px;"></div>
-            <textarea name="itinerary_desc[]" style="display:none;"></textarea>
-        </div>
-        <div style="width: 220px;">
-            <label style="font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin-bottom: 0.25rem;"><i class="fa-solid fa-image" style="margin-right: 0.3rem; color: var(--primary-color);"></i> Gün Görseli</label>
-            <input type="file" name="itinerary_image[]" accept="image/*" style="font-size: 0.8rem; margin-bottom: 0.5rem;" onchange="previewItineraryImage(this)">
-            <img class="itin-img-preview" src="" alt="" style="display:none; width:100%; max-height:120px; object-fit:cover; border-radius:6px; margin-bottom:0.5rem;">
-            <input type="text" name="itinerary_alt[]" placeholder="Görsel alt etiketi (SEO)" style="font-size: 0.85rem;">
-        </div>
-        <button type="button" class="btn-remove" onclick="this.parentElement.remove()">Sil</button>
-    `;
+                <div class="itinerary-card-badge">
+                    <span class="day-num">${dayNum}</span>
+                    <span class="day-label">G\u00dcN</span>
+                </div>
+                <div class="itinerary-card-body">
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;"><i class="fa-solid fa-heading" style="margin-right: 0.3rem; color: var(--primary-color);"></i> G\u00fcn Ba\u015fl\u0131\u011f\u0131</label>
+                        <input type="text" name="itinerary_title[]" placeholder="\u00d6rn: \u015eehir Turu ve M\u00fcze Ziyareti" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;"><i class="fa-solid fa-align-left" style="margin-right: 0.3rem; color: var(--primary-color);"></i> A\u00e7\u0131klama</label>
+                        <!-- Quill Editor Container -->
+                        <div class="quill-editor" style="height: 120px;"></div>
+                        <textarea name="itinerary_desc[]" style="display:none;"></textarea>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;"><i class="fa-solid fa-image" style="margin-right: 0.3rem; color: var(--primary-color);"></i> G\u00fcn G\u00f6rseli</label>
+                        <img class="itin-img-preview" src="" alt="" style="display:none; width:100%; max-height:150px; object-fit:cover; border-radius:8px; margin-bottom:0.5rem;">
+                        <input type="file" name="itinerary_image[]" accept="image/*" style="font-size: 0.8rem; margin-bottom: 0.5rem;" onchange="previewItineraryImage(this)">
+                        <input type="text" name="itinerary_alt[]" placeholder="G\u00f6rsel alt etiketi (SEO)" style="font-size: 0.85rem;">
+                    </div>
+                </div>
+                <button type="button" class="itinerary-card-delete" title="Bu g\u00fcn\u00fc sil" onclick="removeItineraryCard(this)"><i class="fa-solid fa-trash-can"></i></button>
+            `;
             container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            div.querySelector('input[name="itinerary_title[]"]').focus();
 
             // Initialize Quill for the newly added row
             const newQuillEditor = div.querySelector('.quill-editor');
@@ -435,15 +521,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
+        function removeItineraryCard(btn) {
+            const card = btn.closest('.itinerary-card');
+            card.style.animation = 'fadeOutDown 0.3s ease';
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.remove();
+                renumberItineraryDays();
+            }, 280);
+        }
+
+        function renumberItineraryDays() {
+            const cards = document.querySelectorAll('#itinerary-container .itinerary-card');
+            cards.forEach((card, index) => {
+                card.querySelector('.day-num').textContent = index + 1;
+            });
+        }
+
         function addInclusionRow(type) {
             const containerId = type === 1 ? 'included-container' : 'excluded-container';
             const inputName = type === 1 ? 'inc_included[]' : 'inc_excluded[]';
             const div = document.createElement('div');
             div.className = 'dynamic-row';
-            div.style.background = 'white'; // White background for rows inside colored containers
+            div.style.background = 'white';
 
             div.innerHTML = `
-        <input type="text" name="${inputName}" placeholder="Hizmet adı" style="flex: 1;">
+        <input type="text" name="${inputName}" placeholder="Hizmet ad\u0131" style="flex: 1;">
         <button type="button" class="btn-remove" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
     `;
             document.getElementById(containerId).appendChild(div);
@@ -451,50 +554,100 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         function addFeatureRow() {
             const container = document.getElementById('features-container');
-            const index = container.children.length;
             const div = document.createElement('div');
-            div.className = 'dynamic-row';
-            div.style.alignItems = 'flex-start';
-
+            div.className = 'feature-card';
+            div.style.animation = 'fadeInUp 0.3s ease';
             div.innerHTML = `
-                <div style="width: 150px;">
-                    <label style="font-size: 0.8rem;">İkon</label>
-                    <select name="feature_icon[]" style="width: 100%; padding: 0.5rem;" onchange="this.nextElementSibling.className = this.value">
-                        <option value="fa-solid fa-plane">✈️ Uçuş</option>
-                        <option value="fa-solid fa-hotel">🏨 Otel</option>
-                        <option value="fa-solid fa-utensils">🍽️ Yemek</option>
-                        <option value="fa-solid fa-users">👥 Rehber</option>
-                        <option value="fa-solid fa-bus">🚌 Transfer</option>
-                        <option value="fa-solid fa-calendar-days">📅 Tarih</option>
-                        <option value="fa-solid fa-ticket">🎟️ Bilet</option>
-                        <option value="fa-solid fa-passport">🛂 Vize</option>
-                        <option value="fa-solid fa-camera">📷 Fotoğraf</option>
-                    </select>
-                    <i class="fa-solid fa-plane" style="font-size: 1.5rem; color: var(--primary-color); display: block; text-align: center; margin-top: 0.5rem;"></i>
+                <div class="feature-card-content">
+                    <div style="width: 140px;">
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #666; margin-bottom: 0.4rem; display: block; text-transform: uppercase; letter-spacing: 0.5px;">\u0130KON SE\u00c7\u0130M\u0130</label>
+                        <div class="feature-icon-preview" style="margin-bottom: 0.8rem;">
+                            <i class="fa-solid fa-plane"></i>
+                        </div>
+                        <select name="feature_icon[]" style="width: 100%; padding: 0.5rem; font-size: 0.85rem; border: 1px solid #ddd; border-radius: 6px; background: #fafafa;"
+                            onchange="this.previousElementSibling.querySelector('i').className = this.value">
+                            <option value="fa-solid fa-plane">\u2708\ufe0f U\u00e7u\u015f</option>
+                            <option value="fa-solid fa-hotel">\ud83c\udfe8 Otel</option>
+                            <option value="fa-solid fa-utensils">\ud83c\udf7d\ufe0f Yemek</option>
+                            <option value="fa-solid fa-users">\ud83d\udc65 Rehber</option>
+                            <option value="fa-solid fa-bus">\ud83d\ude8c Transfer</option>
+                            <option value="fa-solid fa-calendar-days">\ud83d\udcc5 Tarih</option>
+                            <option value="fa-solid fa-ticket">\ud83c\udfab Bilet</option>
+                            <option value="fa-solid fa-passport">\ud83d\udec2 Vize</option>
+                            <option value="fa-solid fa-camera">\ud83d\udcf7 Foto\u011fraf</option>
+                        </select>
+                    </div>
+
+                    <div class="feature-form-grid">
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Ba\u015fl\u0131k</label>
+                            <input type="text" name="feature_title[]" placeholder="\u00d6rn: U\u00e7u\u015f Dahil" required
+                                style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Alt Ba\u015fl\u0131k</label>
+                            <input type="text" name="feature_subtitle[]" placeholder="\u00d6rn: THY ile Gidi\u015f-D\u00f6n\u00fc\u015f"
+                                style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
+                        </div>
+                    </div>
                 </div>
-                <div style="flex: 1;">
-                    <label style="font-size: 0.8rem;">Başlık</label>
-                    <input type="text" name="feature_title[]" placeholder="Örn: Uçuş Dahil" required style="margin-bottom: 0.5rem;">
-                    
-                    <label style="font-size: 0.8rem;">Alt Başlık</label>
-                    <input type="text" name="feature_subtitle[]" placeholder="Örn: THY ile Gidiş-Dönüş">
-                </div>
-                <button type="button" class="btn-remove" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" class="feature-card-delete" title="\u00d6zelli\u011fi sil" onclick="removeFeatureCard(this)"><i class="fa-solid fa-trash-can"></i></button>
             `;
             container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function removeFeatureCard(btn) {
+            const card = btn.closest('.feature-card');
+            card.style.animation = 'fadeOutDown 0.3s ease';
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.remove();
+            }, 280);
         }
 
         function addDateRow() {
+            const container = document.getElementById('dates-container');
             const div = document.createElement('div');
-            div.className = 'dynamic-row';
+            div.className = 'date-card';
+            div.style.animation = 'fadeInUp 0.3s ease';
             div.innerHTML = `
-        <div><label style="font-size: 0.8rem;">Başlangıç</label><input type="date" name="date_start[]"></div>
-        <div><label style="font-size: 0.8rem;">Bitiş</label><input type="date" name="date_end[]"></div>
-        <div><label style="font-size: 0.8rem;">Özel Fiyat (€)</label><input type="number" name="date_price[]" value="0" step="0.01"></div>
-        <div><label style="font-size: 0.8rem;">Kontenjan</label><input type="number" name="date_quota[]" value="20" style="width: 80px;"></div>
-        <button type="button" class="btn-remove" style="margin-top: 1.5rem;" onclick="this.parentElement.remove()">Sil</button>
-    `;
-            document.getElementById('dates-container').appendChild(div);
+                <div class="date-card-content">
+                    <div class="date-badge">
+                        <i class="fa-regular fa-calendar-days"></i>
+                    </div>
+                    <div class="date-form-grid">
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Gidi\u015f Tarihi</label>
+                            <input type="date" name="date_start[]" style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">D\u00f6n\u00fc\u015f Tarihi</label>
+                            <input type="date" name="date_end[]" style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">\u00d6zel Fiyat (\u20ac)</label>
+                            <input type="number" name="date_price[]" value="0" step="0.01" style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 600; color: #555; margin-bottom: 0.25rem; display: block;">Kontenjan</label>
+                            <input type="number" name="date_quota[]" value="20" style="width: 100%; padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="date-card-delete" title="Tarihi sil" onclick="removeDateCard(this)"><i class="fa-solid fa-trash-can"></i></button>
+            `;
+            container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function removeDateCard(btn) {
+            const card = btn.closest('.date-card');
+            card.style.animation = 'fadeOutDown 0.3s ease';
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.remove();
+            }, 280);
         }
 
         // Quill Initialization Logic
