@@ -340,7 +340,7 @@ try {
     $mail->setFrom(SMTP_USERNAME, SMTP_FROM_NAME);
     $mail->addAddress($email);
     $mail->addReplyTo(SMTP_USERNAME, SMTP_FROM_NAME);
-    $mail->addBCC('tarikyurt12@gmail.com');
+    $mail->addBCC('operasyon@sthteam.com');
 
     // Embed CID images
     foreach ($cidImages as $img) {
