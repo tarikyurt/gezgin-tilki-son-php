@@ -11,6 +11,10 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-cache, no-store, must-revalidate');
+
+// PHP execution time limit - SMTP bağlantısı zaman aşımına uğramasın
+set_time_limit(60);
 
 // Sadece POST isteklerini kabul et
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -41,18 +45,27 @@ if (empty($subject)) {
     $subject = 'Web Sitesi İletişim Formu Mesajı';
 }
 
-$mail = new PHPMailer(true);
-
 try {
+    $mail = new PHPMailer(true);
+
     // Sunucu ayarları
     $mail->isSMTP();
     $mail->Host = SMTP_HOST;
     $mail->SMTPAuth = true;
     $mail->Username = SMTP_USERNAME;
     $mail->Password = SMTP_PASSWORD;
-    $mail->SMTPSecure = SMTP_ENCRYPTION;
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
     $mail->Port = SMTP_PORT;
     $mail->CharSet = 'UTF-8';
+    $mail->Timeout = 10; // SMTP bağlantı zaman aşımı (saniye)
+    // Shared hosting SSL sertifika doğrulama sorunlarını aşmak için
+    $mail->SMTPOptions = [
+        'ssl' => [
+            'verify_peer'       => false,
+            'verify_peer_name'  => false,
+            'allow_self_signed' => true,
+        ]
+    ];
 
     // Gönderici ve Alıcı
     // Mail sunucumuz (SMTP_USERNAME) üstünden gönderilecek
